@@ -153,14 +153,13 @@ const Records = ({ route }) => {
     const ba_id = fetchedUser.ba_id;
 
     const isNetwork = await handleNewtwork();
-    console.log(isNetwork, "net");
 
     if (isNetwork) {
       if (isNetwork.isConnected && isNetwork.isInternetReachable) {
         mutate({ formattedDate, formID, ba_id });
       }
 
-      if (isNetwork.isConnected === false) {
+      if (isNetwork.isConnected === false && Platform.OS !== 'web') {
         Notifier.showNotification({
           title: "Network Error",
           description: "No network access, Please check your network!",
@@ -174,7 +173,7 @@ const Records = ({ route }) => {
         });
       }
 
-      if (isNetwork.isInternetReachable === false) {
+      if (isNetwork.isInternetReachable === false && Platform.OS !== 'web') {
         Notifier.showNotification({
           title: "Network Error",
           description: "No internet access, Please check your internet!",
