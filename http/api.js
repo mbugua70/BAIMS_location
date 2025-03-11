@@ -232,7 +232,7 @@ export async function fetchRecordData(phone) {
 
 export async function fetchRecordByDate(requestData) {
   const { formattedDate, ba_id, formID } = requestData;
-
+   console.log("called api")
   const fetchData = {
     ba_id: ba_id,
     form_id: formID,

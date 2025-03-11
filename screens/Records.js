@@ -155,7 +155,7 @@ const Records = ({ route }) => {
     const isNetwork = await handleNewtwork();
     console.log(isNetwork, "net");
 
-    if (isNetwork && Platform.OS !== 'web') {
+    if (isNetwork) {
       if (isNetwork.isConnected && isNetwork.isInternetReachable) {
         mutate({ formattedDate, formID, ba_id });
       }
