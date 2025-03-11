@@ -6,6 +6,38 @@
     "framework": null,
     "rewrites": [
       {
+        "source": "/api/login",
+        "destination": "https://iguru.co.ke/BAIMS/ep/login.php"
+      },
+      {
+        "source": "/api/summaryform",
+        "destination": "https://iguru.co.ke/BAIMS/ep/BM.php"
+      },
+      {
+        "source": "/api/recordedit",
+        "destination":"https://iguru.co.ke/BAIMS/ep/UPDATE-RECORD.php"
+      },
+      {
+        "source": "/api/recorddata",
+        "destination": "https://iguru.co.ke/coke/api/REPORT.php/"
+      },
+      {
+        "source": "/api/recordbydate",
+        "destination": "https://iguru.co.ke/BAIMS/ep/FORM-DATA.php"
+      },
+      {
+       "source": "/api/preject",
+       "destination": "https://iguru.co.ke/BAIMS/ep/PROJECTS.php"
+      },
+      {
+        "source": "/api/form",
+        "destination": "https://iguru.co.ke/BAIMS/ep/FORMS.php"
+      },
+      {
+        "source": "/api/inputs",
+        "destination": "https://iguru.co.ke/BAIMS/ep/VIEW-FORM.php"
+      },
+      {
         "source": "/:path*",
         "destination": "/"
       }
