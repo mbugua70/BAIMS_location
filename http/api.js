@@ -16,7 +16,7 @@ export async function LoginHander({ name, password }) {
   const encodedDat = new URLSearchParams(userData).toString();
 
 
-  const res = await fetch("https://iguru.co.ke/BAIMS/ep/login.php", {
+  const res = await fetch("/api/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -122,7 +122,7 @@ export async function SummaryForm(recordData) {
   console.log("Submitting data:", Object.fromEntries(formData.entries()));
   // https://iguru.co.ke/BAIMS/ep/BM.php
 
-  const res = await fetch("https://iguru.co.ke/BAIMS/ep/BM.php", {
+  const res = await fetch("/api/summaryform", {
     method: "POST",
     body: formData,
   });
@@ -184,7 +184,7 @@ export async function RecordEditForm(recordData) {
     }
   });
 
-  const res = await fetch("https://iguru.co.ke/BAIMS/ep/UPDATE-RECORD.php", {
+  const res = await fetch("/api/recordedit", {
     method: "POST",
     body: formData,
   });
@@ -210,7 +210,7 @@ export async function fetchRecordData(phone) {
   const encodedDat = new URLSearchParams(baPhone).toString();
 
   try {
-    const response = await fetch(`https://iguru.co.ke/coke/api/REPORT.php/`, {
+    const response = await fetch(`/api/recorddata`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -229,6 +229,7 @@ export async function fetchRecordData(phone) {
     return error;
   }
 }
+
 export async function fetchRecordByDate(requestData) {
   const { formattedDate, ba_id, formID } = requestData;
 
@@ -241,7 +242,7 @@ export async function fetchRecordByDate(requestData) {
   const encodedData = new URLSearchParams(fetchData).toString();
 
   try {
-    const response = await fetch(`https://iguru.co.ke/BAIMS/ep/FORM-DATA.php`, {
+    const response = await fetch(`/api/recordbydate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -282,7 +283,7 @@ export async function ProjectRefetch(baID) {
 
   const encodedDat = new URLSearchParams(userDetails).toString();
 
-  const res = await fetch("https://iguru.co.ke/BAIMS/ep/PROJECTS.php", {
+  const res = await fetch("/api/preject", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded", // ✅ Ensure correct headers
@@ -302,6 +303,7 @@ export async function ProjectRefetch(baID) {
     };
   }
 }
+
 // form refetch
 export async function formRefetch(projectData) {
   const {baID, projectName, projectID} = projectData;
@@ -315,7 +317,7 @@ export async function formRefetch(projectData) {
 
   const encodedDat = new URLSearchParams(projectDetails).toString();
 
-  const res = await fetch("https://iguru.co.ke/BAIMS/ep/FORMS.php", {
+  const res = await fetch("/api/form", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -349,7 +351,7 @@ export async function inputRefetchHandler(projectData) {
 
   const encodedDat = new URLSearchParams(projectDetails).toString();
 
-  const res = await fetch("https://iguru.co.ke/BAIMS/ep/VIEW-FORM.php", {
+  const res = await fetch("/api/inputs", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
