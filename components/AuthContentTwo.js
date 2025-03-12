@@ -52,7 +52,7 @@ function AuthContentTwo({
         },
       });
       return;
-    } else if (!isInternetReachable) {
+    } else if (!isInternetReachable && Platform.OS !== 'web') {
       Notifier.showNotification({
         title: "Network Error",
         description: "No internet access!",
