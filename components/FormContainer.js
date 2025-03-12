@@ -12,11 +12,11 @@ import {
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import React, { useState, useLayoutEffect } from "react";
+import { GlobalStyles } from "../Constants/Globalcolors";
 
 import Input from "./Input";
 import InputTwo from "./InputTwo";
 import FlatButton from "../UI/FlatButton";
-import { GlobalStyles } from "../Constants/Globalcolors";
 
 const FormContainer = ({
   onSubmit,
