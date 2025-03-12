@@ -39,7 +39,7 @@ function AuthContentTwo({
   }, []);
 
   async function submitHandler(credentials) {
-    if (isOffline) {
+    if (isOffline && Platform.OS !== 'web') {
       Notifier.showNotification({
         title: "Network Error",
         description: "No network access, Please check your network!",
