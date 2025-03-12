@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Notifier, NotifierComponents } from "react-native-notifier";
 import { GlobalStyles } from "../Constants/Globalcolors";
 
+import Swal from "sweetalert2";
 import FormContainer from "./FormContainer";
 import Toast from "react-native-toast-message";
 
@@ -24,7 +25,7 @@ function AuthContent({
   });
 
   useEffect(() => {
-    if(Platform.OS !== 'web'){
+    if (Platform.OS !== "web") {
       const unsubscribe = NetInfo.addEventListener((state) => {
         setIsOffline(!state.isConnected);
         setIsInternetReachable(state.isInternetReachable);
@@ -74,16 +75,28 @@ function AuthContent({
     const passwordIsValid = password.length > 2;
 
     if (!passwordIsValid || !nameIsValid) {
-      Alert.alert("Invalid Input", "Please check your credentials.");
-      setCredentialsInvalid({
-        name: !nameIsValid,
-        password: !passwordIsValid,
-      });
+      if (Platform.OS === "web") {
+        Swal.fire({
+          title: "Invalid input",
+          text: "Please check your credentials!",
+          icon: "error",
+        });
+        setCredentialsInvalid({
+          name: !nameIsValid,
+          password: !passwordIsValid,
+        });
+      } else {
+        Alert.alert("Invalid Input", "Please check your credentials.");
+        setCredentialsInvalid({
+          name: !nameIsValid,
+          password: !passwordIsValid,
+        });
+      }
 
       return;
     }
 
-    if (isOffline && Platform.OS !== 'web') {
+    if (isOffline && Platform.OS !== "web") {
       Notifier.showNotification({
         title: "Network Error",
         description: "No network access, Please check your network!",
@@ -96,7 +109,7 @@ function AuthContent({
         },
       });
       return;
-    } else if (!isInternetReachable && Platform.OS !== 'web') {
+    } else if (!isInternetReachable && Platform.OS !== "web") {
       Notifier.showNotification({
         title: "Network Error",
         description: "No internet access!",
