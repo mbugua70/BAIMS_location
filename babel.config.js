@@ -3,7 +3,7 @@ module.exports = {
       //preset code
     ],
     plugins: [
-
+      '@babel/plugin-proposal-export-namespace-from',
       'react-native-reanimated/plugin',
     ],
   };
