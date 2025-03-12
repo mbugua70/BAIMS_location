@@ -21,6 +21,7 @@ export default BackButtonIcon;
 
 const styles = StyleSheet.create({
   buttonContainer: {
+    marginHorizontal: 10,
     backgroundColor: GlobalStyles.colors.gray200,
     borderRadius: 16,
     overflow: "hidden",
