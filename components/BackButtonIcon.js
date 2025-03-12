@@ -10,7 +10,7 @@ const BackButtonIcon = ({ tintColor }) => {
     navigation.goBack();
   }
   return (
-      <Pressable  onPress={handleBackButton}  style={({pressed}) => [styles.buttonContainer, pressed && styles.pressed ]} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} >
+      <Pressable  onPress={handleBackButton}  style={({pressed}) => [styles.buttonContainer, pressed && styles.pressed, Platform.OS === 'web' ? "" : {marginHorizontal: 10}]} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} >
         <Ionicons name="close" size={24} color="#000000" />
       </Pressable>
 
@@ -21,7 +21,6 @@ export default BackButtonIcon;
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    marginHorizontal: 10,
     backgroundColor: GlobalStyles.colors.gray200,
     borderRadius: 16,
     overflow: "hidden",
