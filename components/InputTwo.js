@@ -23,7 +23,7 @@ const InputTwo = forwardRef(
       <View style={styles.inputContainer}>
         <Text style={[styles.label, isInvalid && styles.labelInvalid]}>
           {formNumber}
-          {Platform.OS === 'web' ? '' : ". "}
+          {Platform.OS === 'web' ? "" : ". "}
           {label}
         </Text>
         <TextInput
