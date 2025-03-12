@@ -74,7 +74,6 @@ const Login = () => {
   }
 
   useEffect(() => {
-    console.log(error, "login error")
     if (error && !isPending) {
       Toast.show({
         type: "error",
