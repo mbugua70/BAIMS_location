@@ -7,7 +7,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Keyboard,
-  Platform,
 } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
@@ -15,7 +14,6 @@ import React, { useState, useLayoutEffect } from "react";
 import { GlobalStyles } from "../Constants/Globalcolors";
 
 import Input from "./Input";
-import InputTwo from "./InputTwo";
 import FlatButton from "../UI/FlatButton";
 
 const FormContainer = ({
@@ -81,28 +79,25 @@ const FormContainer = ({
       style={{ flex: 1 }}
       behavior='padding'
       keyboardVerticalOffset={100}>
-      {Platform.OS === "web" ? (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps='handled'>
-          <InputTwo
+          <Input
             label='Phone'
-            onUpdateValue={(value) =>
-              updateInputValueHandler.bind(this, "name")
-            }
+            onUpdateValue={updateInputValueHandler.bind(this, "name")}
             value={enteredName}
             isInvalid={nameIsValid}
-            placeholder='Tel e.g 07****'
+            icon='phone'
             keyboardType='numeric'
           />
-          <InputTwo
+
+          <Input
             label='Password'
-            onUpdateValue={(value) =>
-              updateInputValueHandler.bind(this, "password")
-            }
+            onUpdateValue={updateInputValueHandler.bind(this, "password")}
             value={enteredPassword}
             isInvalid={passwordIsValid}
-            placeholder='Enter password'
+            icon='lock'
           />
 
           {/* button content */}
@@ -119,44 +114,7 @@ const FormContainer = ({
             )}
           </View>
         </ScrollView>
-      ) : (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps='handled'>
-            <Input
-              label='Phone'
-              onUpdateValue={updateInputValueHandler.bind(this, "name")}
-              value={enteredName}
-              isInvalid={nameIsValid}
-              icon='phone'
-              keyboardType='numeric'
-            />
-
-            <Input
-              label='Password'
-              onUpdateValue={updateInputValueHandler.bind(this, "password")}
-              value={enteredPassword}
-              isInvalid={passwordIsValid}
-              icon='lock'
-            />
-
-            {/* button content */}
-            <View style={styles.submitContainer}>
-              {!isUpdating && !isPending && (
-                <FlatButton onPress={submitHandler}>Login</FlatButton>
-              )}
-              {isPending && (
-                <ActivityIndicator
-                  size={32}
-                  animating={true}
-                  color={MD2Colors.blue700}
-                />
-              )}
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      )}
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };

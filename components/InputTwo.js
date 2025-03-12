@@ -2,6 +2,7 @@ import { View, Text, TextInput, StyleSheet, Platform } from "react-native";
 import { GlobalStyles } from "../Constants/Globalcolors";
 import { forwardRef } from "react";
 
+
 const InputTwo = forwardRef(
   (
     {
@@ -46,6 +47,7 @@ const InputTwo = forwardRef(
   }
 );
 
+
 export default InputTwo;
 
 const styles = StyleSheet.create({
@@ -64,8 +66,8 @@ const styles = StyleSheet.create({
   },
   input: {
     elevation: 4,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 1 },
+    shadowColor: 'black',
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0,
     shadowRadius: 2,
     paddingVertical: 12,
