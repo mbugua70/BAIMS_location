@@ -1,7 +1,16 @@
 import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
-import Animated, {FadeIn, FadeOut} from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import ImageLogo from "./ImageLogo";
 import BadgeUI from "./Badge";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  withDecay,
+} from "react-native-reanimated";
 
 const CardCategoryUI = ({
   onNavigate,
@@ -11,27 +20,46 @@ const CardCategoryUI = ({
   badge,
   isProject,
 }) => {
+  // animation configuration
+  const isPressedOne = useSharedValue(false);
+
+  const tap = Gesture.Tap()
+  .onBegin(() => {
+    isPressedOne.value = true
+  })
+  .onFinalize(() => {
+    isPressedOne.value = false
+  })
+
+
+  const animateStyle = useAnimatedStyle(() => ({
+    opacity: withTiming(isPressedOne.value ? 0 : 1, {duration: 300})
+  }))
+
   return (
-    <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.gridNavItem}>
-      <Pressable
-        android_ripple={{ color: "#ccc" }}
-        style={({ pressed }) => [
-          styles.buttonContainer,
-          pressed
-            ? [styles.pressedButton, { backgroundColor: color }]
-            : { backgroundColor: color },
-        ]}
-        onPress={onNavigate}>
-        <View style={[styles.innerGridContainer]}>
-          <ImageLogo imagename={imagename} />
-          <View>
-            <Text style={styles.title}>{title}</Text>
-            {/* badge component */}
-            <BadgeUI badgeValue={badge} projectTitle={`${title}`} />
+    <GestureDetector gesture={tap}>
+      <Animated.View
+        style={[styles.gridNavItem, animateStyle]}>
+        <Pressable
+          android_ripple={{ color: "#ccc" }}
+          style={({ pressed }) => [
+            styles.buttonContainer,
+            pressed
+              ? [styles.pressedButton, { backgroundColor: color }]
+              : { backgroundColor: color },
+          ]}
+          onPress={onNavigate}>
+          <View style={[styles.innerGridContainer]}>
+            <ImageLogo imagename={imagename} />
+            <View>
+              <Text style={styles.title}>{title}</Text>
+              {/* badge component */}
+              <BadgeUI badgeValue={badge} projectTitle={`${title}`} />
+            </View>
           </View>
-        </View>
-      </Pressable>
-    </Animated.View>
+        </Pressable>
+      </Animated.View>
+    </GestureDetector>
   );
 };
 
