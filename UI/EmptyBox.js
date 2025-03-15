@@ -10,27 +10,30 @@ import Animated, {
   useAnimatedProps,
   withRepeat,
   Easing,
+  withDelay,
 } from "react-native-reanimated";
 import React, { useEffect } from "react";
 
 const TIME = 40;
-const duration = 2000
+const duration = 2000;
 const screenWidth = Dimensions.get("window").width;
-
 
 const EmptyBox = ({ noDataText }) => {
   const offset = useSharedValue(screenWidth / 2 - 190);
   const ImageAnimated = Animated.createAnimatedComponent(Image);
 
-  const animateEmptyBox =  useAnimatedStyle(() => ({
+  const animateEmptyBox = useAnimatedStyle(() => ({
     transform: [{ translateY: offset.value }],
   }));
 
   useEffect(() => {
-    offset.value = withRepeat(
-      withTiming(-offset.value, { duration, easing: Easing.linear}),
-      -1,
-      true
+    offset.value = withDelay(
+      600,
+      withRepeat(
+        withTiming(-offset.value, { duration, easing: Easing.linear }),
+        -1,
+        true
+      )
     );
   }, []);
 
@@ -41,7 +44,6 @@ const EmptyBox = ({ noDataText }) => {
         <ImageAnimated
           source={require("../assets/image/out-of-stock.png")}
           style={[styles.image, animateEmptyBox]}
-
         />
       </View>
       <Text style={styles.textEmpty}>{noDataText}</Text>
