@@ -1,6 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { Notifier, NotifierComponents } from "react-native-notifier";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  withDecay,
+} from "react-native-reanimated";
 import {
   View,
   Text,
@@ -25,7 +35,7 @@ const Home = ({ navigation }) => {
   const { projectsData, addProjects } = useContext(ProjectContext);
   const [isOffline, setIsOffline] = useState(false);
   const [isInternetReachable, setIsInternetReachable] = useState(false);
-
+  const isPressedOne = useSharedValue(false);
   // mutation functionality
   const { data, mutate, isError, error, isPending } = useMutation({
     mutationFn: ProjectRefetch,
@@ -54,13 +64,27 @@ const Home = ({ navigation }) => {
     },
   });
 
+  // animation configuration
+
+  const tap = Gesture.Tap()
+    .onBegin(() => {
+      isPressedOne.value = true;
+    })
+    .onFinalize(() => {
+      isPressedOne.value = false;
+    });
+
+  const animateStyle = useAnimatedStyle(() => ({
+    opacity: withTiming(isPressedOne.value ? 0 : 1, { duration: 300 }),
+  }));
+
   // network configuration
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsOffline(!state.isConnected);
       setIsInternetReachable(state.isInternetReachable);
 
-      if (!state.isConnected && Platform.OS !== 'web') {
+      if (!state.isConnected && Platform.OS !== "web") {
         Notifier.showNotification({
           title: "Network Error",
           description: "No network access, Please check your network!",
@@ -74,7 +98,7 @@ const Home = ({ navigation }) => {
         });
       }
 
-      if (!state.isInternetReachable && Platform.OS !== 'web') {
+      if (!state.isInternetReachable && Platform.OS !== "web") {
         Notifier.showNotification({
           title: "Network Error",
           description: "No internet access!",
@@ -127,15 +151,17 @@ const Home = ({ navigation }) => {
     return (
       <>
         <StatusBar hidden={true} />
-
-        <View style={styles.screen}>
-          <CategoryItem
-            badgeNumber={badgeNumber}
-            title={item.project_title}
-            color='#cee8c7'
-            onNavigate={handleNavigation}
-          />
-        </View>
+        <GestureDetector gesture={tap}>
+          <Animated.View
+            style={[styles.screen, animateStyle]}>
+            <CategoryItem
+              badgeNumber={badgeNumber}
+              title={item.project_title}
+              color='#cee8c7'
+              onNavigate={handleNavigation}
+            />
+          </Animated.View>
+        </GestureDetector>
       </>
     );
   }
@@ -179,11 +205,7 @@ const Home = ({ navigation }) => {
     />
   );
 
-  return (
-    <View style={styles.screenContainer}>
-      {content}
-    </View>
-  );
+  return <View style={styles.screenContainer}>{content}</View>;
 };
 
 export default Home;

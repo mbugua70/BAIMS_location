@@ -13,6 +13,15 @@ import { getIndex } from "../util/getIndex";
 import { AuthContext } from "../store/store";
 import { fetchRecordByDate } from "../http/api";
 import { connectStorageEmulator } from "@react-native-firebase/storage";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  withDecay,
+} from "react-native-reanimated";
 
 const FormItem = ({
   index,
@@ -97,7 +106,11 @@ const FormItem = ({
 
         <View style={styles.flexContainerTwo}>
           {!isPending && (
-            <Text style={styles.overalRecord}>{overall.length}</Text>
+            <Animated.Text
+              style={styles.overalRecord}
+              entering={FadeIn.duration(500)}>
+              {overall.length}
+            </Animated.Text>
           )}
           {isPending && (
             <ActivityIndicator
