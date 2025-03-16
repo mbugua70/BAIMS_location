@@ -35,6 +35,7 @@ const FormItem = ({
   const [recordSubmit, setRecordSubmit] = useState([]);
   const [overall, setOverall] = useState([]);
   const isFocused = useIsFocused();
+  const [isLoading, setIsLoading] = useState(true)
 
   const { data, mutate, isError, error, isPending, isSuccess } = useMutation({
     mutationFn: fetchRecordByDate,
@@ -47,6 +48,7 @@ const FormItem = ({
       const formatData = JSON.parse(data);
       if (formatData.data.length > 0) {
         setOverall(formatData.data);
+        setIsLoading(false)
       }
     },
   });
@@ -79,7 +81,7 @@ const FormItem = ({
       const token = await AsyncStorage.getItem("token");
       const fetchedUser = JSON.parse(token);
       const ba_id = fetchedUser.ba_id;
-
+      setIsLoading(false)
       mutate({ formattedDate, formID, ba_id });
     }
     handleToday();
@@ -105,14 +107,24 @@ const FormItem = ({
         {/* records */}
 
         <View style={styles.flexContainerTwo}>
-          {!isPending && (
+          {!isPending && !isLoading && (
             <Animated.Text
               style={styles.overalRecord}
               entering={FadeIn.duration(500)}>
               {overall.length}
             </Animated.Text>
           )}
-          {isPending && (
+
+          {/* {isPending && !isLoading && (
+            <ActivityIndicator
+              animating={true}
+              color={
+                overall.length === 0 ? MD2Colors.white : MD2Colors.amberA700
+              }
+            />
+          )} */}
+
+          {(isLoading || isPending) && (
             <ActivityIndicator
               animating={true}
               color={
