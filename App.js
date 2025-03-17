@@ -14,6 +14,18 @@ import { GlobalStyles } from "./Constants/Globalcolors";
 import { AuthContextProvider } from "./store/store";
 import { AuthContext } from "./store/store";
 import { queryClient } from "./http/api";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  withDecay,
+  Easing,
+  withSequence,
+} from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 // screens and components import
 import Login from "./screens/Login";
@@ -302,7 +314,6 @@ function TokenHolder() {
   const authctx = useContext(AuthContext);
   const [isAppReady, setIsAppReady] = useState(false);
 
-
   useEffect(() => {
     async function fetchingToken() {
       const token = await AsyncStorage.getItem("token");
@@ -315,8 +326,6 @@ function TokenHolder() {
     fetchingToken();
   }, []);
 
-
-
   useEffect(() => {
     if (isAppReady) {
       SplashScreen.hideAsync();
@@ -328,14 +337,13 @@ function TokenHolder() {
   }
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{flex: 1}}>
       <NotifierWrapper>
         <Navigation />
       </NotifierWrapper>
     </GestureHandlerRootView>
   );
 }
-
 
 export default function App() {
   return (

@@ -9,7 +9,9 @@ import {
   FlatList,
   Alert,
   RefreshControl,
+  Button,
 } from "react-native";
+import { Skeleton } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import { useMutation } from "@tanstack/react-query";
@@ -19,6 +21,17 @@ import { Notifier, NotifierComponents } from "react-native-notifier";
 import { ProjectContext } from "../store/projectContext";
 import { AuthContext } from "../store/store";
 import { filterAndSetFormState, inputRefetchHandler } from "../http/api";
+import { GlobalStyles } from "../Constants/Globalcolors";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  withDecay,
+} from "react-native-reanimated";
+import { LinearGradient } from 'expo-linear-gradient';
 
 import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-toast-message";
@@ -30,7 +43,8 @@ import RadioComponent from "./RadioComponent";
 import Checkbox from "./Checkbox";
 import CheckboxComponent from "./Checkbox";
 import PickerImage from "./PickerImage";
-import { GlobalStyles } from "../Constants/Globalcolors";
+
+const AnimatedFlatlistComp = Animated.createAnimatedComponent(FlatList);
 
 const FormContainerTwo = ({
   isEditing,
@@ -61,6 +75,7 @@ const FormContainerTwo = ({
   const [imageFile, setImageFile] = useState("");
   const [isOffline, setIsOffline] = useState(false);
   const [isInternetReachable, setIsInternetReachable] = useState(false);
+  const [isLoadingInputs, setIsLoadingInputs] = useState(true);
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -144,13 +159,17 @@ const FormContainerTwo = ({
 
   useEffect(() => {
     if (formInputDataTwo.length > 0) {
+      setIsLoadingInputs(true);
       setInputs(formInputDataTwo["0"].inputs);
+      setIsLoadingInputs(false);
     }
 
     if (formInputDataTwo.length === 0) {
       formInputData.forEach((input) => {
         if (formID === input.form_id) {
+          setIsLoadingInputs(true);
           setInputs(input.inputs);
+          setIsLoadingInputs(false);
         }
       });
     }
@@ -324,8 +343,6 @@ const FormContainerTwo = ({
     inputs.forEach((item) => {
       const value = formState[item.field_id];
 
-
-
       if (!value || (Array.isArray(value) && value.length === 0)) {
         errors[item.field_id] = `${item.input_title} is required`;
         isValid = false;
@@ -334,7 +351,6 @@ const FormContainerTwo = ({
           Toast.show({
             type: "error",
             text1: "Please check all your input values",
-            position: "bottom",
           });
         } else {
           Notifier.showNotification({
@@ -433,65 +449,113 @@ const FormContainerTwo = ({
   return (
     <>
       <View style={styles.screen}>
-        <FlatList
-          // scrollEnabled={}
-          data={inputs}
-          keyExtractor={(item) => item.field_id}
-          renderItem={handleInputsForms}
-          contentContainerStyle={styles.flatListContainer}
-          refreshControl={
-            !isEditing && (
-              <RefreshControl
-                refreshing={isPendingRefetching}
-                onRefresh={onRefresh}
-                colors={["#819c79", "#32cd32", "#0000ff"]}
-                tintColor='#819c79'
-              />
-            )
-          }
-          ListHeaderComponent={() => (
-            <Text style={styles.formTitle}>{formTitle}</Text>
-          )}
-          ListFooterComponent={() => (
-            //  footer component
-            <>
-              {/* image picker */}
-              {/* {!isEditing && (
-                <PickerImage
-                  onImageHandler={takeImageHander}
-                  resetForm={resetForm}
-                  imageFile={formState.imageurl}
-                />
-              )} */}
-
-              {/* location picker */}
-              {/* <LocationPicker
-                resetForm={resetForm}
-                onLocationHandler={takeLocationHandler}
-                pickedLocationState={
-                  isEditing
-                    ? { lat: latitude, long: longitude }
-                    : formState.location
-                }
-              /> */}
-
-              {/* submit button */}
-              <View style={styles.submitContainer}>
-                {isPending ? (
-                  <ActivityIndicator
-                    animating={true}
-                    color={MD2Colors.lightBlueA700}
-                    size='small'
-                  />
-                ) : (
-                  <FlatButton isPending={isPending} onPress={submitHandler}>
-                    SUBMIT
-                  </FlatButton>
-                )}
+        {isLoadingInputs && (
+          <>
+            <Animated.View
+              style={styles.screenSkeleton}
+              entering={FadeIn.duration(300)}
+              exiting={FadeOut.duration(300)}>
+              <Text style={styles.formTitle}>{formTitle}</Text>
+              {/* each item container */}
+              <View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton  animation='wave' width={120} height={20} />
+                </View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width='100%' height={40} />
+                </View>
               </View>
-            </>
-          )}
-        />
+              <View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width={120} height={20} />
+                </View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width='100%' height={40} />
+                </View>
+              </View>
+              <View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width={120} height={20} />
+                </View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width='100%' height={40} />
+                </View>
+              </View>
+              <View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width={120} height={20} />
+                </View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width='100%' height={40} />
+                </View>
+              </View>
+              <View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width={120} height={20} />
+                </View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width='100%' height={40} />
+                </View>
+              </View>
+              <View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width={120} height={20} />
+                </View>
+                <View style={styles.skeletonItem}>
+                  <Skeleton animation='wave' width='100%' height={40} />
+                </View>
+              </View>
+              <View style={styles.skeletonButtonContainer}>
+                <FlatButton isPending={isPending} onPress={submitHandler}>
+                  SUBMIT
+                </FlatButton>
+              </View>
+            </Animated.View>
+          </>
+        )}
+        {!isLoadingInputs && (
+          <AnimatedFlatlistComp
+            entering={FadeIn.duration(300)}
+            exiting={FadeOut.duration(300)}
+            showsVerticalScrollIndicator={false}
+            data={inputs}
+            keyExtractor={(item) => item.field_id}
+            renderItem={handleInputsForms}
+            contentContainerStyle={styles.flatListContainer}
+            refreshControl={
+              !isEditing && (
+                <RefreshControl
+                  refreshing={isPendingRefetching}
+                  onRefresh={onRefresh}
+                  colors={["#819c79", "#32cd32", "#0000ff"]}
+                  tintColor='#819c79'
+                />
+              )
+            }
+            ListHeaderComponent={() => (
+              <Text style={styles.formTitle}>{formTitle}</Text>
+            )}
+            ListFooterComponent={() => (
+              //  footer component
+              <>
+                {/* submit button */}
+                <View style={styles.submitContainer}>
+                  {isPending ? (
+                    <ActivityIndicator
+                      animating={true}
+                      color={MD2Colors.lightBlueA700}
+                      size='small'
+                    />
+                  ) : (
+                    <FlatButton isPending={isPending} onPress={submitHandler}>
+                      SUBMIT
+                    </FlatButton>
+                  )}
+                </View>
+              </>
+            )}
+          />
+        )}
       </View>
     </>
   );
@@ -510,16 +574,27 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingBottom: 0,
-    paddingTop: 20,
+    paddingTop: 0,
     flexGrow: 1,
   },
 
   submitContainer: {
     marginTop: 20,
-    marginBottom: 0,
+    marginBottom: 20,
   },
 
   flatListContainer: {
     paddingTop: 20,
+  },
+  screenSkeleton: {
+    flex: 1,
+  },
+
+  skeletonItem: {
+    marginVertical: 5,
+  },
+
+  skeletonButtonContainer: {
+    marginVertical: 20,
   },
 });
