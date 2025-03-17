@@ -28,18 +28,16 @@ function AuthContentTwo({
   const [credentialsInvalid, setCredentialsInvalid] = useState({});
 
   useEffect(() => {
-    if(Platform.OS !== 'web'){
-      const unsubscribe = NetInfo.addEventListener((state) => {
-        setIsOffline(!state.isConnected);
-        setIsInternetReachable(state.isInternetReachable);
-    });
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsOffline(!state.isConnected);
+      setIsInternetReachable(state.isInternetReachable);
+  });
 
-      return () => unsubscribe();
-    }
+    return () => unsubscribe();
   }, []);
 
   async function submitHandler(credentials) {
-    if (isOffline && Platform.OS !== 'web') {
+    if (isOffline) {
       Notifier.showNotification({
         title: "Network Error",
         description: "No network access, Please check your network!",
@@ -52,7 +50,7 @@ function AuthContentTwo({
         },
       });
       return;
-    } else if (!isInternetReachable && Platform.OS !== 'web') {
+    } else if (!isInternetReachable) {
       Notifier.showNotification({
         title: "Network Error",
         description: "No internet access!",
