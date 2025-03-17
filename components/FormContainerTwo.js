@@ -45,7 +45,7 @@ import Checkbox from "./Checkbox";
 import CheckboxComponent from "./Checkbox";
 import PickerImage from "./PickerImage";
 
-const AnimatedFlatlistComp = Animated.FlatList(FlatList);
+const AnimatedFlatlistComp = Animated.FlatList;
 
 const FormContainerTwo = ({
   isEditing,
