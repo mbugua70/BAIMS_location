@@ -45,7 +45,7 @@ import Checkbox from "./Checkbox";
 import CheckboxComponent from "./Checkbox";
 import PickerImage from "./PickerImage";
 
-const AnimatedFlatlistComp = Animated.createAnimatedComponent(FlatList);
+const AnimatedFlatlistComp = Animated.FlatList(FlatList);
 
 const FormContainerTwo = ({
   isEditing,
@@ -514,6 +514,9 @@ const FormContainerTwo = ({
             </Animated.View>
           </>
         )}
+
+
+
         {!isLoadingInputs && (
           <AnimatedFlatlistComp
             entering={FadeIn.duration(300)}
