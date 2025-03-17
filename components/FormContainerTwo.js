@@ -10,6 +10,7 @@ import {
   Alert,
   RefreshControl,
   Button,
+  Platform,
 } from "react-native";
 import { Skeleton } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -449,7 +450,7 @@ const FormContainerTwo = ({
   return (
     <>
       <View style={styles.screen}>
-        {isLoadingInputs && (
+        {(isLoadingInputs && Platform.OS !== "web") && (
           <>
             <Animated.View
               style={styles.screenSkeleton}
