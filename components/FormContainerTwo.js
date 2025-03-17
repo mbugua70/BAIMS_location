@@ -450,7 +450,7 @@ const FormContainerTwo = ({
   return (
     <>
       <View style={styles.screen}>
-        {(isLoadingInputs && Platform.OS !== "web") && (
+        {isLoadingInputs && (
           <>
             <Animated.View
               style={styles.screenSkeleton}
