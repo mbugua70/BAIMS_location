@@ -329,14 +329,13 @@ function TokenHolder() {
   }, []);
 
 
-
-
   useEffect(() => {
     async function getLocationHandler() {
 
       let { status } = await Location.requestForegroundPermissionsAsync();
+
       if (status) {
-        // authctx.addPermission(hasPermission)
+        authctx.addPermission(status)
       }
       // Ensure splash screen hides regardless
       SplashScreen.hide();
