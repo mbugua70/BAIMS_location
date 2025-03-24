@@ -430,20 +430,22 @@ const FormContainerTwo = ({
   }
 
   async function submitHandler() {
-    if (isPermissionLocation === undefined) {
-      const updatedPermission = await Location.getForegroundPermissionsAsync();
-      console.log(updatedPermission, 'permssion updated')
-      console.log(locationPermissionInformation, "loc info")
-      if (updatedPermission.status !== locationPermissionInformation?.status) {
-        console.log("calling")
-        requestPermission();
-        console.log("called")
-      }
+    console.log(isPermissionLocation, "location")
+    if (isPermissionLocation === "denied") {
+      requestPermission();
+      // const updatedPermission = await Location.getForegroundPermissionsAsync();
+      // console.log(updatedPermission, 'permssion updated')
+      // console.log(locationPermissionInformation, "loc info")
+      // if (updatedPermission.status !== locationPermissionInformation?.status) {
+      //   console.log("calling")
+
+      //   console.log("called")
+      // }
     }
-    if (isPermissionLocation) {
-      const { lat, long } = await getLocationHandler();
-      console.log(lat, long, "lat and long");
-    }
+    // if (isPermissionLocation) {
+    //   const { lat, long } = await getLocationHandler();
+    //   console.log(lat, long, "lat and long");
+    // }
     // if (validateForm()) {
     //   onSubmit({ ...formState, form_id: formID, input_number: inputs.length });
     // }
