@@ -13,6 +13,8 @@ export const AuthContext = createContext({
   isLocation: false,
   indexHandler: (index) => {},
   handleFormDateRecord: (date) => {},
+  isPermissionLocation: "",
+  addPermission: () => {}
 });
 
 export function AuthContextProvider({ children }) {
@@ -20,6 +22,7 @@ export function AuthContextProvider({ children }) {
   const [locationStore, setLocationStore] = useState({});
   const [indexItem, setIndexItem] = useState([]);
   const [formDateRecord, setFormDateRecord] = useState("");
+  const [isPermittedLocation, setIsLocationPermission] = useState()
 
   function authenticate(token) {
     setAuthToken(token);
@@ -39,6 +42,11 @@ export function AuthContextProvider({ children }) {
     setIndexItem((prev) => [...prev, index]);
   }
 
+  function addPermission(permission) {
+    setIsLocationPermission(permission)
+    AsyncStorage.setItem("locationPermission", JSON.stringify(permission));
+  }
+
   function logout() {
     AsyncStorage.removeItem("token");
     AsyncStorage.removeItem("formNumbers");
@@ -55,6 +63,22 @@ export function AuthContextProvider({ children }) {
     setFormDateRecord(date);
   }
 
+  useEffect(() => {
+    async function loadStoredData() {
+      try {
+        const locationPermission = await AsyncStorage.getItem("locationPermission");
+
+
+        if (locationPermission) setIsLocationPermission(JSON.parse(locationPermission));
+
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    }
+
+    loadStoredData();
+  }, []);
+
   const value = {
     token: authToken,
     isAuthenticate: !!authToken,
@@ -67,6 +91,8 @@ export function AuthContextProvider({ children }) {
     indexHandler: indexHandler,
     handleFormDateRecord: handleFormDateRecord,
     formDateRecord: formDateRecord,
+    isPermissionLocation: isPermittedLocation,
+    addPermission: addPermission
   };
 
 

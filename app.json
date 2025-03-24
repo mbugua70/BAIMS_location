@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "data_app",
-    "slug": "data_app",
+    "name": "BAIMS",
+    "slug": "BAIMS",
     "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -49,7 +49,10 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow BAIMS to access this device's location?"
+          "locationAlwaysAndWhenInUsePermission": "Allow BAIMS to access this device's location?",
+          "locationAlwaysPermission": "BAIMS requires location access to continuously find your nearby location even when the app is running in the background.",
+          "locationWhenInUsePermission": "BAIMS requires location access to continuously find your nearby location even when the app is running in the background.",
+          "isAndroidForegroundServiceEnabled": true
         }
       ],
       [

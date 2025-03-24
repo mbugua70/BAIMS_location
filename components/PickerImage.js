@@ -21,17 +21,8 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
   const [isFetchingImage, setIsFetchingImage] = useState(false);
   const [pickedImage, setPickedImaage] = useState("");
   const [isUploadingFile, setIsUploadingFile] = useState(false);
-  const [reference, setReference] = useState("");
+  const [reference, setReference] = useState({});
   const [isImagePicked, setIsImagePicked] = useState(false);
-
-  useEffect(() => {
-    if (imageFile) {
-      const reference = storage().ref(
-        `data_image_one/${formatImage(imageFile)}`
-      );
-      setReference(reference);
-    }
-  }, [imageFile]);
 
   async function verifyCameraPermission() {
     if (
@@ -75,17 +66,15 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
       onImageHandler(uri);
 
       if (uri) {
+        console.log(uri, "image uri");
         const uriImage = formatImage(uri);
-        // path to existing file on filesystem
-        //   const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/${uriImage}`;
-        //   console.log(pathToFile, "path upload")
+        const reference = storage().ref(`data_image_one/${formatImage(uri)}`);
+
         // uploads file
         try {
           setIsUploadingFile(true);
           const uploadResponse = await reference.putFile(uri);
           setIsUploadingFile(false);
-
-          console.log(uploadResponse);
         } catch (error) {
           setIsUploadingFile(false);
           console.log(error, "error uploading file to firebase");
@@ -115,7 +104,6 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
   );
 
   if (imageFile && !isFetchingImage) {
-
     imageContent = <Image style={styles.image} source={{ uri: imageFile }} />;
   }
 
@@ -157,7 +145,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-     borderRadius: 12,
+    borderRadius: 12,
   },
 
   emptyContainer: {

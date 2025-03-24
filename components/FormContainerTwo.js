@@ -32,8 +32,9 @@ import Animated, {
   withSpring,
   withDecay,
 } from "react-native-reanimated";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 
+import * as Location from "expo-location";
 import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-toast-message";
 import InputTwo from "./InputTwo";
@@ -45,7 +46,8 @@ import Checkbox from "./Checkbox";
 import CheckboxComponent from "./Checkbox";
 import PickerImage from "./PickerImage";
 
-const AnimatedFlatlistComp = Platform.OS === 'web' ? FlatList : Animated.FlatList;
+const AnimatedFlatlistComp =
+  Platform.OS === "web" ? FlatList : Animated.FlatList;
 
 const FormContainerTwo = ({
   isEditing,
@@ -69,6 +71,7 @@ const FormContainerTwo = ({
     formInputDataTwo,
     editedData,
   } = useContext(ProjectContext);
+  const { isPermissionLocation } = useContext(AuthContext);
   const [inputs, setInputs] = useState("");
   const [errors, setErrors] = useState({});
   const [longitude, setLongitude] = useState("");
@@ -77,6 +80,8 @@ const FormContainerTwo = ({
   const [isOffline, setIsOffline] = useState(false);
   const [isInternetReachable, setIsInternetReachable] = useState(false);
   const [isLoadingInputs, setIsLoadingInputs] = useState(true);
+  const [locationPermissionInformation, requestPermission] =
+    Location.useForegroundPermissions();
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -337,6 +342,59 @@ const FormContainerTwo = ({
     }));
   }
 
+  // location handler func
+  // async function verifyLocationPermission() {
+  //   if (
+  //     locationPermissionInformation.status ===
+  //     Location.PermissionStatus.UNDETERMINED
+  //   ) {
+  //     const isPermission = await requestPermission();
+  //     return isPermission.granted;
+  //   }
+
+  //   if (
+  //     locationPermissionInformation.status === Location.PermissionStatus.DENIED
+  //   ) {
+  //     Alert.alert(
+  //       "Denied location Permission",
+  //       "You need to accept location permission to continue"
+  //     );
+  //     return false;
+  //   }
+
+  //   return true;
+  // }
+
+  // location handler two
+  // async function handleGetLocation() {
+  //   const hasPermission = await verifyLocationPermission();
+
+  //   if (!hasPermission) {
+  //     return;
+  //   }
+  //   setIsFetchingLocation(true);
+  //   const { coords } = await Location.getCurrentPositionAsync({
+  //     accuracy: Location.Accuracy.High,
+  //   });
+  //   setIsFetchingLocation(false);
+  //   return {
+  //     lat: coords.latitude,
+  //     long: coords.longitude,
+  //   };
+  // }
+
+  async function getLocationHandler() {
+    setIsFetchingLocation(true);
+    const { coords } = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    });
+    setIsFetchingLocation(false);
+    return {
+      lat: coords.latitude,
+      long: coords.longitude,
+    };
+  }
+
   function validateForm() {
     let errors = {};
     let isValid = true;
@@ -371,14 +429,27 @@ const FormContainerTwo = ({
     return isValid;
   }
 
-  function submitHandler() {
-    if (validateForm()) {
-      onSubmit({ ...formState, form_id: formID, input_number: inputs.length });
+  async function submitHandler() {
+    if (isPermissionLocation === undefined) {
+      const updatedPermission = await Location.getForegroundPermissionsAsync();
+      console.log(updatedPermission, 'permssion updated')
+      console.log(locationPermissionInformation, "loc info")
+      if (updatedPermission.status !== locationPermissionInformation?.status) {
+        console.log("calling")
+        requestPermission();
+        console.log("called")
+      }
     }
+    if (isPermissionLocation) {
+      const { lat, long } = await getLocationHandler();
+      console.log(lat, long, "lat and long");
+    }
+    // if (validateForm()) {
+    //   onSubmit({ ...formState, form_id: formID, input_number: inputs.length });
+    // }
   }
 
   // refetch function
-
   const onRefresh = React.useCallback(async () => {
     const token = await AsyncStorage.getItem("token");
 
@@ -450,7 +521,7 @@ const FormContainerTwo = ({
   return (
     <>
       <View style={styles.screen}>
-        {(isLoadingInputs && Platform.OS !== 'web') && (
+        {isLoadingInputs && Platform.OS !== "web" && (
           <>
             <Animated.View
               style={styles.screenSkeleton}
@@ -460,7 +531,7 @@ const FormContainerTwo = ({
               {/* each item container */}
               <View>
                 <View style={styles.skeletonItem}>
-                  <Skeleton  animation='wave' width={120} height={20} />
+                  <Skeleton animation='wave' width={120} height={20} />
                 </View>
                 <View style={styles.skeletonItem}>
                   <Skeleton animation='wave' width='100%' height={40} />
@@ -515,8 +586,6 @@ const FormContainerTwo = ({
           </>
         )}
 
-
-
         {!isLoadingInputs && (
           <AnimatedFlatlistComp
             entering={FadeIn.duration(300)}
@@ -542,6 +611,8 @@ const FormContainerTwo = ({
             ListFooterComponent={() => (
               //  footer component
               <>
+                {/* location picker */}
+
                 {/* submit button */}
                 <View style={styles.submitContainer}>
                   {isPending ? (

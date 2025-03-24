@@ -1,6 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import * as Location from "expo-location";
 import * as SplashScreen from "expo-splash-screen";
 import { useContext, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -313,6 +314,7 @@ function Navigation() {
 function TokenHolder() {
   const authctx = useContext(AuthContext);
   const [isAppReady, setIsAppReady] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   useEffect(() => {
     async function fetchingToken() {
@@ -326,18 +328,48 @@ function TokenHolder() {
     fetchingToken();
   }, []);
 
+
+
+
   useEffect(() => {
+    async function getLocationHandler() {
+
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status) {
+        // authctx.addPermission(hasPermission)
+      }
+      // Ensure splash screen hides regardless
+      SplashScreen.hide();
+    }
+
     if (isAppReady) {
-      SplashScreen.hideAsync();
+      getLocationHandler();
     }
   }, [isAppReady]);
 
-  if (!isAppReady) {
-    return null;
+  useEffect(() => {
+  async function fetchLocationPermission() {
+    const hasPermission = await locationHandler();
+    console.log(hasPermission, "Location Permission Status");
+
+    if (hasPermission) {
+      // Adding permission status to context
+      authctx.addPermission(hasPermission);
+    }
+
+    // Only hide the splash screen once the permission process is done
+    SplashScreen.hide();
   }
 
+  // Fetch location permission status and hide splash screen once it's ready
+  if (isAppReady) {
+    fetchLocationPermission();
+  }
+}, [isAppReady]);
+
+
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <NotifierWrapper>
         <Navigation />
       </NotifierWrapper>
