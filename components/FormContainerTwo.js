@@ -11,18 +11,26 @@ import {
   RefreshControl,
   Button,
   Platform,
+  AppState,
 } from "react-native";
 import { Skeleton } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  useCallback,
+} from "react";
 import { Notifier, NotifierComponents } from "react-native-notifier";
 import { ProjectContext } from "../store/projectContext";
 import { AuthContext } from "../store/store";
 import { filterAndSetFormState, inputRefetchHandler } from "../http/api";
 import { GlobalStyles } from "../Constants/Globalcolors";
+import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -35,6 +43,7 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 
 import * as Location from "expo-location";
+import * as Linking from "expo-linking";
 import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-toast-message";
 import InputTwo from "./InputTwo";
@@ -45,6 +54,7 @@ import RadioComponent from "./RadioComponent";
 import Checkbox from "./Checkbox";
 import CheckboxComponent from "./Checkbox";
 import PickerImage from "./PickerImage";
+import BottomSheetAuto from "../UI/BottomSheetAuto";
 
 const AnimatedFlatlistComp =
   Platform.OS === "web" ? FlatList : Animated.FlatList;
@@ -71,6 +81,7 @@ const FormContainerTwo = ({
     formInputDataTwo,
     editedData,
   } = useContext(ProjectContext);
+  const { addPermission } = useContext(AuthContext);
   const { isPermissionLocation } = useContext(AuthContext);
   const [inputs, setInputs] = useState("");
   const [errors, setErrors] = useState({});
@@ -82,6 +93,8 @@ const FormContainerTwo = ({
   const [isLoadingInputs, setIsLoadingInputs] = useState(true);
   const [locationPermissionInformation, requestPermission] =
     Location.useForegroundPermissions();
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [userLocation, setUserLocation] = useState({})
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -96,6 +109,33 @@ const FormContainerTwo = ({
   const inputRef10 = useRef(null);
   const inputRef11 = useRef(null);
   const inputRef12 = useRef(null);
+  const bottomSheetModalAutoRef = useRef(null);
+  const previousPermission = useRef(null);
+
+  useEffect(() => {
+    console.log("rendered");
+    console.log(isPermissionLocation);
+    async function handleLocation() {
+      if (isPermissionLocation === "denied") {
+        bottomSheetModalAutoRef.current?.present();
+      }
+
+      if (isPermissionLocation === "granted") {
+        setIsFetchingLocation(true);
+        const { coords } = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        setIsFetchingLocation(false);
+
+         const {latitude, longitude} = coords;
+         if(latitude && longitude) {
+            setUserLocation({lat: latitude, long: longitude})
+         }
+      }
+    }
+
+    handleLocation();
+  }, [isPermissionLocation]);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -133,6 +173,40 @@ const FormContainerTwo = ({
 
     return () => unsubscribe();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = AppState.addEventListener(
+        "change",
+        async (nextAppState) => {
+          if (nextAppState === "active") {
+            const updatedPermission =
+              await Location.getForegroundPermissionsAsync();
+
+            // Prevent unnecessary updates
+            if (previousPermission.current !== updatedPermission.status) {
+              previousPermission.current = updatedPermission.status;
+              if (
+                updatedPermission.status !==
+                locationPermissionInformation?.status
+              ) {
+                requestPermission();
+              }
+
+              if (
+                updatedPermission.status === Location.PermissionStatus.GRANTED
+              ) {
+                bottomSheetModalAutoRef.current?.dismiss();
+                addPermission(updatedPermission.status);
+              }
+            }
+          }
+        }
+      );
+
+      return () => subscription.remove();
+    }, [locationPermissionInformation]) // Run only when permission info changes
+  );
 
   // mutation functionality for refetch
   const {
@@ -342,47 +416,6 @@ const FormContainerTwo = ({
     }));
   }
 
-  // location handler func
-  // async function verifyLocationPermission() {
-  //   if (
-  //     locationPermissionInformation.status ===
-  //     Location.PermissionStatus.UNDETERMINED
-  //   ) {
-  //     const isPermission = await requestPermission();
-  //     return isPermission.granted;
-  //   }
-
-  //   if (
-  //     locationPermissionInformation.status === Location.PermissionStatus.DENIED
-  //   ) {
-  //     Alert.alert(
-  //       "Denied location Permission",
-  //       "You need to accept location permission to continue"
-  //     );
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
-
-  // location handler two
-  // async function handleGetLocation() {
-  //   const hasPermission = await verifyLocationPermission();
-
-  //   if (!hasPermission) {
-  //     return;
-  //   }
-  //   setIsFetchingLocation(true);
-  //   const { coords } = await Location.getCurrentPositionAsync({
-  //     accuracy: Location.Accuracy.High,
-  //   });
-  //   setIsFetchingLocation(false);
-  //   return {
-  //     lat: coords.latitude,
-  //     long: coords.longitude,
-  //   };
-  // }
-
   async function getLocationHandler() {
     setIsFetchingLocation(true);
     const { coords } = await Location.getCurrentPositionAsync({
@@ -429,25 +462,47 @@ const FormContainerTwo = ({
     return isValid;
   }
 
-  async function submitHandler() {
-    console.log(isPermissionLocation, "location")
-    if (isPermissionLocation === "denied") {
-      requestPermission();
-      // const updatedPermission = await Location.getForegroundPermissionsAsync();
-      // console.log(updatedPermission, 'permssion updated')
-      // console.log(locationPermissionInformation, "loc info")
-      // if (updatedPermission.status !== locationPermissionInformation?.status) {
-      //   console.log("calling")
+  async function handleOpenSettingsLocation() {
+    if (locationPermissionInformation.canAskAgain === false) {
+      Linking.openSettings().catch(() =>
+        console.log("failed to open the settings")
+      );
+    } else {
+      const { status } = await requestPermission();
+      console.log(status, "status");
+      if (status === "granted") {
+        addPermission(status);
+        setIsFetchingLocation(true);
+        const { coords } = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        setIsFetchingLocation(false);
 
-      //   console.log("called")
-      // }
+        // location handler
+        console.log(coords, "coords");
+      } else {
+        addPermission(status);
+        bottomSheetModalAutoRef.current?.dismiss();
+      }
     }
-    // if (isPermissionLocation) {
-    //   const { lat, long } = await getLocationHandler();
-    //   console.log(lat, long, "lat and long");
-    // }
-    // if (validateForm()) {
-    //   onSubmit({ ...formState, form_id: formID, input_number: inputs.length });
+  }
+
+  function submitHandler() {
+    //  check location first
+    console.log("location", userLocation);
+    // if (isPermissionLocation === "granted") {
+    //   const { coords } = await Location.getCurrentPositionAsync({
+    //     accuracy: Location.Accuracy.High,
+    //   });
+    //   console.log(coords, "lat and long");
+
+    //   if (validateForm()) {
+    //     onSubmit({
+    //       ...formState,
+    //       form_id: formID,
+    //       input_number: inputs.length,
+    //     });
+    //   }
     // }
   }
 
@@ -633,6 +688,10 @@ const FormContainerTwo = ({
             )}
           />
         )}
+        <BottomSheetAuto
+          ref={bottomSheetModalAutoRef}
+          onAutomatically={handleOpenSettingsLocation}
+        />
       </View>
     </>
   );
