@@ -181,6 +181,7 @@ const Dashboard = ({ navigation }) => {
             <CardCategoryUI
               onNavigate={handleDashboardNav}
               title='Project'
+              details="Active projects"
               color='#cee8c7'
               imagename={images.image1}
               isProject={true}
@@ -188,12 +189,14 @@ const Dashboard = ({ navigation }) => {
             />
             <CardCategoryUI
               title='Message'
+              details="messages"
               color='#aaede9'
               imagename={images.image2}
               badge='0'
             />
             <CardCategoryUI
               title='Offline'
+              details="forms"
               color={GlobalStyles.colors.error50}
               imagename={images.imageOffline}
               badge='0'

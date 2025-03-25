@@ -15,6 +15,7 @@ import Animated, {
 const CardCategoryUI = ({
   onNavigate,
   title,
+  details,
   color,
   imagename,
   badge,
@@ -54,7 +55,7 @@ const CardCategoryUI = ({
             <View>
               <Text style={styles.title}>{title}</Text>
               {/* badge component */}
-              <BadgeUI badgeValue={badge} projectTitle={`${title}`} />
+              <BadgeUI badgeValue={badge} projectTitle={`${details}`} />
             </View>
           </View>
         </Pressable>
