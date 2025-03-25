@@ -33,6 +33,7 @@ const Dashboard = ({ navigation }) => {
   const images = {
     image1: require("../assets/image/backlog.png"),
     image2: require("../assets/image/mail.png"),
+    imageOffline: require("../assets/image/cloud.png")
   };
 
   // mutation functionality
@@ -191,6 +192,12 @@ const Dashboard = ({ navigation }) => {
               imagename={images.image2}
               badge='0'
             />
+            <CardCategoryUI
+              title='Offline'
+              color={GlobalStyles.colors.error50}
+              imagename={images.imageOffline}
+              badge='0'
+            />
           </View>
         </ScrollView>
       </View>
@@ -211,5 +218,7 @@ const styles = StyleSheet.create({
   },
   screenContainer: {
     flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between"
   },
 });

@@ -67,9 +67,10 @@ export default CardCategoryUI;
 
 const styles = StyleSheet.create({
   gridNavItem: {
-    flex: 1,
-    marginTop: 16,
-    marginHorizontal: 8,
+    // flex: 1,
+    width: "48%",
+    marginTop: 12,
+    marginHorizontal: 2,
     height: 150,
     borderRadius: 8,
     elevation: 8,
