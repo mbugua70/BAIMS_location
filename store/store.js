@@ -22,7 +22,7 @@ export function AuthContextProvider({ children }) {
   const [locationStore, setLocationStore] = useState({});
   const [indexItem, setIndexItem] = useState([]);
   const [formDateRecord, setFormDateRecord] = useState("");
-  const [isPermittedLocation, setIsLocationPermission] = useState()
+  const [isPermittedLocation, setIsLocationPermission] = useState("")
 
   function authenticate(token) {
     setAuthToken(token);
@@ -44,6 +44,7 @@ export function AuthContextProvider({ children }) {
 
   function addPermission(permission) {
     setIsLocationPermission(permission)
+    console.log(permission, 'store perrmission')
     AsyncStorage.setItem("locationPermission", JSON.stringify(permission));
   }
 
@@ -68,7 +69,6 @@ export function AuthContextProvider({ children }) {
       try {
         const locationPermission = await AsyncStorage.getItem("locationPermission");
 
-
         if (locationPermission) setIsLocationPermission(JSON.parse(locationPermission));
 
       } catch (error) {
@@ -76,7 +76,7 @@ export function AuthContextProvider({ children }) {
       }
     }
 
-    loadStoredData();
+    return () => loadStoredData.remove();
   }, []);
 
   const value = {

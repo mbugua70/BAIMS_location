@@ -5,7 +5,6 @@ import { View, Text, StyleSheet, Button, Image } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 
-import TransactionComponent from "./TransactionComponent";
 import TextButtonThree from "./TextButtonThree";
 import { GlobalStyles } from "../Constants/Globalcolors";
 
@@ -51,8 +50,7 @@ const BottomSheetAuto = forwardRef(({ onAutomatically }, ref) => {
           <View style={styles.textContainer}>
             <Text style={styles.headerDetails}>Where are you?</Text>
             <Text style={styles.details}>
-              Set your location so that we can locate Gym near you, Or get the
-              direction of the Gym for you.
+             Allow your location permission so that we can locate you?
             </Text>
           </View>
           {/* button */}

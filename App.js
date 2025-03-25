@@ -15,6 +15,7 @@ import { GlobalStyles } from "./Constants/Globalcolors";
 import { AuthContextProvider } from "./store/store";
 import { AuthContext } from "./store/store";
 import { queryClient } from "./http/api";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -328,14 +329,12 @@ function TokenHolder() {
     fetchingToken();
   }, []);
 
-
   useEffect(() => {
     async function getLocationHandler() {
-
       let { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status) {
-        authctx.addPermission(status)
+        authctx.addPermission(status);
       }
       // Ensure splash screen hides regardless
       SplashScreen.hide();
@@ -347,31 +346,32 @@ function TokenHolder() {
   }, [isAppReady]);
 
   useEffect(() => {
-  async function fetchLocationPermission() {
-    const hasPermission = await locationHandler();
-    console.log(hasPermission, "Location Permission Status");
+    async function fetchLocationPermission() {
+      const hasPermission = await locationHandler();
+      console.log(hasPermission, "Location Permission Status");
 
-    if (hasPermission) {
-      // Adding permission status to context
-      authctx.addPermission(hasPermission);
+      if (hasPermission) {
+        // Adding permission status to context
+        authctx.addPermission(hasPermission);
+      }
+
+      // Only hide the splash screen once the permission process is done
+      SplashScreen.hide();
     }
 
-    // Only hide the splash screen once the permission process is done
-    SplashScreen.hide();
-  }
-
-  // Fetch location permission status and hide splash screen once it's ready
-  if (isAppReady) {
-    fetchLocationPermission();
-  }
-}, [isAppReady]);
-
+    // Fetch location permission status and hide splash screen once it's ready
+    if (isAppReady) {
+      fetchLocationPermission();
+    }
+  }, [isAppReady]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NotifierWrapper>
-        <Navigation />
-      </NotifierWrapper>
+      <BottomSheetModalProvider>
+        <NotifierWrapper>
+          <Navigation />
+        </NotifierWrapper>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
