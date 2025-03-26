@@ -194,13 +194,13 @@ const Dashboard = ({ navigation }) => {
               imagename={images.image2}
               badge='0'
             />
-            <CardCategoryUI
+            {/* <CardCategoryUI
               title='Offline'
               details="forms"
               color={GlobalStyles.colors.error50}
               imagename={images.imageOffline}
               badge='0'
-            />
+            /> */}
           </View>
         </ScrollView>
       </View>

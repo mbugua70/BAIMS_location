@@ -113,8 +113,7 @@ const FormContainerTwo = ({
   const previousPermission = useRef(null);
 
   useEffect(() => {
-    console.log("rendered");
-    console.log(isPermissionLocation);
+
     async function handleLocation() {
       if (isPermissionLocation === "denied") {
         bottomSheetModalAutoRef.current?.present();
@@ -469,7 +468,6 @@ const FormContainerTwo = ({
       );
     } else {
       const { status } = await requestPermission();
-      console.log(status, "status");
       if (status === "granted") {
         addPermission(status);
         setIsFetchingLocation(true);
@@ -479,7 +477,6 @@ const FormContainerTwo = ({
         setIsFetchingLocation(false);
 
         // location handler
-        console.log(coords, "coords");
       } else {
         addPermission(status);
         bottomSheetModalAutoRef.current?.dismiss();
@@ -489,20 +486,21 @@ const FormContainerTwo = ({
 
   function submitHandler() {
     //  check location first
-    console.log("location", userLocation);
     // if (isPermissionLocation === "granted") {
     //   const { coords } = await Location.getCurrentPositionAsync({
     //     accuracy: Location.Accuracy.High,
     //   });
     //   console.log(coords, "lat and long");
 
-    //   if (validateForm()) {
-    //     onSubmit({
-    //       ...formState,
-    //       form_id: formID,
-    //       input_number: inputs.length,
-    //     });
-    //   }
+      if (validateForm()) {
+        onSubmit({
+          ...formState,
+          form_id: formID,
+          input_number: inputs.length,
+          latitude: userLocation.lat,
+          longitude: userLocation.long,
+        });
+      }
     // }
   }
 
