@@ -47,6 +47,7 @@ export async function SummaryForm(recordData) {
   const token = await AsyncStorage.getItem("token");
   const { record } = recordData;
 
+
   if (!token) {
     throw new Error("No token found in AsyncStorage.");
   }
@@ -85,15 +86,7 @@ export async function SummaryForm(recordData) {
       }
 
        for(const [key, value] of Object.entries(record)){
-        if (key === "location") {
-          const { lat, long } = value;
-          const latKey = `sub_1_${nextNumber}`;
-          const longKey = `sub_1_${nextNumber + 1}`;
-          // nextNumber += 2;
-
-          formData.append(latKey, lat);
-          formData.append(longKey, long);
-        } else if (key === "imageurl") {
+        if (key === "imageurl") {
           const uri = value;
           const formattedImage = uri.split("/").pop();
 
@@ -123,7 +116,6 @@ export async function SummaryForm(recordData) {
         }
        }
     });
-
 
   const res = await fetch(api, {
     method: "POST",
@@ -187,6 +179,7 @@ export async function RecordEditForm(recordData) {
       formData.append(key, value);
     }
   });
+
 
   const res = await fetch(api, {
     method: "POST",

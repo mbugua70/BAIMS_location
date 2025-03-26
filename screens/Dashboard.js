@@ -33,6 +33,7 @@ const Dashboard = ({ navigation }) => {
   const images = {
     image1: require("../assets/image/backlog.png"),
     image2: require("../assets/image/mail.png"),
+    imageOffline: require("../assets/image/cloud.png")
   };
 
   // mutation functionality
@@ -180,6 +181,7 @@ const Dashboard = ({ navigation }) => {
             <CardCategoryUI
               onNavigate={handleDashboardNav}
               title='Project'
+              details="Active projects"
               color='#cee8c7'
               imagename={images.image1}
               isProject={true}
@@ -187,10 +189,18 @@ const Dashboard = ({ navigation }) => {
             />
             <CardCategoryUI
               title='Message'
+              details="messages"
               color='#aaede9'
               imagename={images.image2}
               badge='0'
             />
+            {/* <CardCategoryUI
+              title='Offline'
+              details="forms"
+              color={GlobalStyles.colors.error50}
+              imagename={images.imageOffline}
+              badge='0'
+            /> */}
           </View>
         </ScrollView>
       </View>
@@ -211,5 +221,7 @@ const styles = StyleSheet.create({
   },
   screenContainer: {
     flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between"
   },
 });

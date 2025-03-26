@@ -15,6 +15,7 @@ import Animated, {
 const CardCategoryUI = ({
   onNavigate,
   title,
+  details,
   color,
   imagename,
   badge,
@@ -54,7 +55,7 @@ const CardCategoryUI = ({
             <View>
               <Text style={styles.title}>{title}</Text>
               {/* badge component */}
-              <BadgeUI badgeValue={badge} projectTitle={`${title}`} />
+              <BadgeUI badgeValue={badge} projectTitle={`${details}`} />
             </View>
           </View>
         </Pressable>
@@ -67,9 +68,10 @@ export default CardCategoryUI;
 
 const styles = StyleSheet.create({
   gridNavItem: {
-    flex: 1,
-    marginTop: 16,
-    marginHorizontal: 8,
+    // flex: 1,
+    width: "48%",
+    marginTop: 12,
+    marginHorizontal: 2,
     height: 150,
     borderRadius: 8,
     elevation: 8,
