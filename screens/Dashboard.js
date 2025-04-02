@@ -22,6 +22,7 @@ import Toast from "react-native-toast-message";
 import CardCategoryUI from "../UI/CardCategoryUI";
 import Welcome from "../components/Welcome";
 import { useIsFocused } from "@react-navigation/native";
+import { database } from "../models";
 
 
 const Dashboard = ({ navigation }) => {
@@ -29,6 +30,7 @@ const Dashboard = ({ navigation }) => {
   const [isOffline, setIsOffline] = useState(false);
   const [isInternetReachable, setIsInternetReachable] = useState(false);
   const [userID, setUserID] = useState("")
+  const [offline, setOfflineData] = useState("")
   const isFocused = useIsFocused();
   const images = {
     image1: require("../assets/image/backlog.png"),
@@ -105,6 +107,16 @@ const Dashboard = ({ navigation }) => {
     navigation.navigate("Projects");
   }
 
+  const getFormsOffline = async () => {
+   const forms = await database.get('forms').query().fetch()
+   if(forms.length !== 0) {
+    setOfflineData(forms.length)
+   }
+   setOfflineData(0)
+  }
+
+
+
   useEffect(() => {
    async function creatUserHandler () {
     const token = await AsyncStorage.getItem("token");
@@ -123,6 +135,8 @@ const Dashboard = ({ navigation }) => {
    }
 
    creatUserHandler();
+     // fetch offline when it loads
+   getFormsOffline()
   }, [isFocused])
 
   const onRefresh = React.useCallback(async () => {
@@ -194,13 +208,13 @@ const Dashboard = ({ navigation }) => {
               imagename={images.image2}
               badge='0'
             />
-            {/* <CardCategoryUI
+            <CardCategoryUI
               title='Offline'
               details="forms"
               color={GlobalStyles.colors.error50}
               imagename={images.imageOffline}
-              badge='0'
-            /> */}
+              badge={offline}
+            />
           </View>
         </ScrollView>
       </View>
