@@ -7,26 +7,23 @@ import migrations from './migrations'
 import Forms from './forms'
 // import Post from './model/Post' // ⬅️ You'll import your Models here
 
-// First, create the adapter to the underlying database:
-const adapter = new SQLiteAdapter({
-  schema,
-  migrations,
-  // (optional database name or file system path)
-  // dbName: 'myapp',
-  // (recommended option, should work flawlessly out of the box on iOS. On Android,
-  // additional installation steps have to be taken - disable if you run into issues...)
-  jsi: true, /* Platform.OS === 'ios' */
-  // (optional, but you should implement this method)
-  onSetUpError: error => {
-    // Database failed to load -- offer the user to reload the app or log out
-  }
-})
+// Conditionally configure the adapter based on platform
+const adapter = Platform.OS === 'ios' || Platform.OS === 'android'
+  ? new SQLiteAdapter({
+      schema,
+      migrations,
+      jsi: true,  // Enable JSI for iOS/Android
+      onSetUpError: error => {
+        // Database failed to load -- offer the user to reload the app or log out
+      }
+    })
+  : null;  // Or use a different adapter for Web (if required)
 
-// Then, make a Watermelon database from it!
-export const database = new Database({
+// Only initialize the database if the adapter is valid
+export const database = adapter ? new Database({
   adapter,
   modelClasses: [
     // Post, // ⬅️ You'll add Models to Watermelon here
     Forms,
   ],
-})
+}) : null; // Handle case for Web (no SQLite on Web)
