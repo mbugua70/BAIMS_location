@@ -97,6 +97,7 @@ const FormContainerTwo = ({
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [userLocation, setUserLocation] = useState({})
   const [isLocationStatus, setIsLocationStatus] = useState("")
+  const [locationErrorWeb, setLocationErrorWeb] = useState("")
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -118,6 +119,7 @@ const FormContainerTwo = ({
 
     if(isLocationStatus !== "off"){
       async function handleLocation() {
+       if(Platform.OS !== 'web') {
         if (isPermissionLocation === "denied") {
           bottomSheetModalAutoRef.current?.present();
         }
@@ -134,6 +136,26 @@ const FormContainerTwo = ({
               setUserLocation({lat: latitude, long: longitude})
            }
         }
+       }else{
+
+        // setting location for the web
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              setUserLocation({
+                lat: position.coords.latitude,
+                long: position.coords.longitude,
+              });
+            },
+            (error) => {
+              setLocationErrorWeb(error.message);
+            }
+          );
+        } else {
+          setLocationErrorWeb("Geolocation is not supported by this browser.");
+        }
+
+       }
       }
 
       handleLocation();
@@ -499,29 +521,29 @@ const FormContainerTwo = ({
 
       if (validateForm()) {
 
-        console.log("offline")
+        // console.log("offline")
 
-        await database.write(async () => {
-          await database.get('forms').create(form => {
-            form.formId = formID;
-            form.formData = JSON.stringify({...formState});
-            form.latitude = userLocation.lat;
-            form.longitude = userLocation.long;
-            form.createdAt = Date.now();
-            form.updatedAt = Date.now();
-          });
-        });
-
-        console.log("offline finished")
-
-
-        // onSubmit({
-        //   ...formState,
-        //   form_id: formID,
-        //   input_number: inputs.length,
-        //   latitude: userLocation.lat,
-        //   longitude: userLocation.long,
+        // await database.write(async () => {
+        //   await database.get('forms').create(form => {
+        //     form.formId = formID;
+        //     form.formData = JSON.stringify({...formState});
+        //     form.latitude = userLocation.lat;
+        //     form.longitude = userLocation.long;
+        //     form.createdAt = Date.now();
+        //     form.updatedAt = Date.now();
+        //   });
         // });
+
+        // console.log("offline finished")
+
+
+        onSubmit({
+          ...formState,
+          form_id: formID,
+          input_number: inputs.length,
+          latitude: userLocation.lat,
+          longitude: userLocation.long,
+        });
       }
     // }
   }

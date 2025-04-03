@@ -340,7 +340,7 @@ function TokenHolder() {
       SplashScreen.hide();
     }
 
-    if (isAppReady) {
+    if (isAppReady && Platform.OS !== 'web') {
       getLocationHandler();
     }
   }, [isAppReady]);
@@ -360,7 +360,7 @@ function TokenHolder() {
     }
 
     // Fetch location permission status and hide splash screen once it's ready
-    if (isAppReady) {
+    if (isAppReady && Platform.OS !== 'web') {
       fetchLocationPermission();
     }
   }, [isAppReady]);
