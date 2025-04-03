@@ -51,7 +51,8 @@ const Login = () => {
         const inputsFields = filteredForms.flatMap((form) => form.forms.map((form_inputs) => ({
           form_id: form_inputs.form_id,
           form_title: form_inputs.form_title,
-          inputs: form_inputs.form_fields
+          inputs: form_inputs.form_fields,
+          location_status: form_inputs.location_status
         })));
 
         const selectFields = inputsFields.flatMap((formSelect) =>

@@ -76,7 +76,7 @@ export function AuthContextProvider({ children }) {
       }
     }
 
-    return () => loadStoredData.remove();
+    loadStoredData();
   }, []);
 
   const value = {
