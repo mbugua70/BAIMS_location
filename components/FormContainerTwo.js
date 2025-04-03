@@ -41,6 +41,7 @@ import Animated, {
   withDecay,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+import { database } from "../models";
 
 import * as Location from "expo-location";
 import * as Linking from "expo-linking";
@@ -95,6 +96,7 @@ const FormContainerTwo = ({
     Location.useForegroundPermissions();
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [userLocation, setUserLocation] = useState({})
+  const [isLocationStatus, setIsLocationStatus] = useState("")
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -113,29 +115,30 @@ const FormContainerTwo = ({
   const previousPermission = useRef(null);
 
   useEffect(() => {
-    console.log("rendered");
-    console.log(isPermissionLocation);
-    async function handleLocation() {
-      if (isPermissionLocation === "denied") {
-        bottomSheetModalAutoRef.current?.present();
+
+    if(isLocationStatus !== "off"){
+      async function handleLocation() {
+        if (isPermissionLocation === "denied") {
+          bottomSheetModalAutoRef.current?.present();
+        }
+
+        if (isPermissionLocation === "granted") {
+          setIsFetchingLocation(true);
+          const { coords } = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.High,
+          });
+          setIsFetchingLocation(false);
+
+           const {latitude, longitude} = coords;
+           if(latitude && longitude) {
+              setUserLocation({lat: latitude, long: longitude})
+           }
+        }
       }
 
-      if (isPermissionLocation === "granted") {
-        setIsFetchingLocation(true);
-        const { coords } = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        setIsFetchingLocation(false);
-
-         const {latitude, longitude} = coords;
-         if(latitude && longitude) {
-            setUserLocation({lat: latitude, long: longitude})
-         }
-      }
+      handleLocation();
     }
-
-    handleLocation();
-  }, [isPermissionLocation]);
+  }, [isPermissionLocation, isLocationStatus]);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -247,6 +250,7 @@ const FormContainerTwo = ({
     if (formInputDataTwo.length === 0) {
       formInputData.forEach((input) => {
         if (formID === input.form_id) {
+          setIsLocationStatus(input.location_status)
           setIsLoadingInputs(true);
           setInputs(input.inputs);
           setIsLoadingInputs(false);
@@ -469,7 +473,6 @@ const FormContainerTwo = ({
       );
     } else {
       const { status } = await requestPermission();
-      console.log(status, "status");
       if (status === "granted") {
         addPermission(status);
         setIsFetchingLocation(true);
@@ -479,7 +482,6 @@ const FormContainerTwo = ({
         setIsFetchingLocation(false);
 
         // location handler
-        console.log(coords, "coords");
       } else {
         addPermission(status);
         bottomSheetModalAutoRef.current?.dismiss();
@@ -487,22 +489,40 @@ const FormContainerTwo = ({
     }
   }
 
-  function submitHandler() {
+  async function submitHandler() {
     //  check location first
-    console.log("location", userLocation);
     // if (isPermissionLocation === "granted") {
     //   const { coords } = await Location.getCurrentPositionAsync({
     //     accuracy: Location.Accuracy.High,
     //   });
     //   console.log(coords, "lat and long");
 
-    //   if (validateForm()) {
-    //     onSubmit({
-    //       ...formState,
-    //       form_id: formID,
-    //       input_number: inputs.length,
-    //     });
-    //   }
+      if (validateForm()) {
+
+        console.log("offline")
+
+        await database.write(async () => {
+          await database.get('forms').create(form => {
+            form.formId = formID;
+            form.formData = JSON.stringify({...formState});
+            form.latitude = userLocation.lat;
+            form.longitude = userLocation.long;
+            form.createdAt = Date.now();
+            form.updatedAt = Date.now();
+          });
+        });
+
+        console.log("offline finished")
+
+
+        // onSubmit({
+        //   ...formState,
+        //   form_id: formID,
+        //   input_number: inputs.length,
+        //   latitude: userLocation.lat,
+        //   longitude: userLocation.long,
+        // });
+      }
     // }
   }
 
