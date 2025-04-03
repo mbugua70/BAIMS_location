@@ -41,7 +41,7 @@ import Animated, {
   withDecay,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { database } from "../models";
+import { database } from "../models/index.android";
 
 import * as Location from "expo-location";
 import * as Linking from "expo-linking";

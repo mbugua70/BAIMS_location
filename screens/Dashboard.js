@@ -22,7 +22,7 @@ import Toast from "react-native-toast-message";
 import CardCategoryUI from "../UI/CardCategoryUI";
 import Welcome from "../components/Welcome";
 import { useIsFocused } from "@react-navigation/native";
-import { database } from "../models";
+import { database } from "../models/index.android";
 
 
 const Dashboard = ({ navigation }) => {
