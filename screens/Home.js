@@ -146,6 +146,7 @@ const Home = ({ navigation }) => {
       });
     }
 
+
     badgeNumber = item.forms.length;
 
     return (
