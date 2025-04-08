@@ -1,6 +1,6 @@
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { RadioButton } from "react-native-paper";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo} from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { GlobalStyles } from "../Constants/Globalcolors";
 
@@ -50,7 +50,7 @@ const RadioComponent = ({ title, data, onUpdateValue, formNumber, isSuccess, isE
   );
 };
 
-export default RadioComponent;
+export default memo(RadioComponent);
 
 const styles = StyleSheet.create({
   container: {

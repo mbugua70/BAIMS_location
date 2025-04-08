@@ -117,6 +117,8 @@ export async function SummaryForm(recordData) {
        }
     });
 
+    console.log(Object.fromEntries(formData), "formData");
+
   const res = await fetch(api, {
     method: "POST",
     body: formData,
@@ -127,11 +129,13 @@ export async function SummaryForm(recordData) {
   if (res.ok) {
     return data;
   } else {
-    throw {
-      message: data || "Submission failed.",
-      statusText: res.statusText,
-      status: res.status,
-    };
+
+    console.log(data, "error found");
+    // throw {
+    //   message: data || "Submission failed.",
+    //   statusText: res.statusText,
+    //   status: res.status,
+    // };
   }
 }
 

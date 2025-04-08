@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { Checkbox } from 'react-native-paper';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo} from 'react';
 import { GlobalStyles } from '../Constants/Globalcolors';
 
 const CheckboxComponent = ({
@@ -20,7 +20,7 @@ const CheckboxComponent = ({
 
   // Store checked state per item
   const [selectedValues, setSelectedValues] = useState({});
-   console.log(selectedValues, "selectedvalues")
+
   function toggleCheckbox(item) {
     // Ensure the existing value is either `true` or `false` before toggling
     const newValues = {
@@ -46,7 +46,7 @@ const CheckboxComponent = ({
   }
   useEffect(() => {
     if (valueEntered && typeof valueEntered === "string" && isEditing && !isOnchange) {
-      console.log("valueEntered before splitting:", valueEntered);
+
 
       const outputs = Object.fromEntries(
         valueEntered.split(',').map(option => [option.trim(), true])
@@ -77,7 +77,7 @@ const CheckboxComponent = ({
   );
 };
 
-export default CheckboxComponent;
+export default memo(CheckboxComponent);
 
 const styles = StyleSheet.create({
   container: {

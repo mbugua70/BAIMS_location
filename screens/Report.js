@@ -57,7 +57,7 @@ const Report = ({ route }) => {
   }, [isFocused])
 
   useEffect(() => {
-    console.log(error, "Error");
+    console.log(error, "Error when submitting");
     if (error && !isPending) {
       Toast.show({
         type: "error",

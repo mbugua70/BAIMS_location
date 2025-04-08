@@ -1,6 +1,6 @@
 import { View, Text, TextInput, StyleSheet, Platform } from "react-native";
 import { GlobalStyles } from "../Constants/Globalcolors";
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 
 
 const InputTwo = forwardRef(
@@ -48,7 +48,7 @@ const InputTwo = forwardRef(
 );
 
 
-export default InputTwo;
+export default memo(InputTwo);
 
 const styles = StyleSheet.create({
   inputContainer: {

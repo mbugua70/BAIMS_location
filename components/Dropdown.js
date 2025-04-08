@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
@@ -52,7 +52,7 @@ const DropdownComponent = forwardRef(({
   );
 });
 
-export default DropdownComponent;
+export default memo(DropdownComponent);
 
 const styles = StyleSheet.create({
   inputContainer: {

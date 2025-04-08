@@ -95,9 +95,9 @@ const FormContainerTwo = ({
   const [locationPermissionInformation, requestPermission] =
     Location.useForegroundPermissions();
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
-  const [userLocation, setUserLocation] = useState({})
-  const [isLocationStatus, setIsLocationStatus] = useState("")
-  const [locationErrorWeb, setLocationErrorWeb] = useState("")
+  const [userLocation, setUserLocation] = useState({});
+  const [isLocationStatus, setIsLocationStatus] = useState("");
+  const [locationErrorWeb, setLocationErrorWeb] = useState("");
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -116,46 +116,45 @@ const FormContainerTwo = ({
   const previousPermission = useRef(null);
 
   useEffect(() => {
-
-    if(isLocationStatus !== "off"){
+    if (isLocationStatus !== "off") {
       async function handleLocation() {
-       if(Platform.OS !== 'web') {
-        if (isPermissionLocation === "denied") {
-          bottomSheetModalAutoRef.current?.present();
-        }
+        if (Platform.OS !== "web") {
+          if (isPermissionLocation === "denied") {
+            bottomSheetModalAutoRef.current?.present();
+          }
 
-        if (isPermissionLocation === "granted") {
-          setIsFetchingLocation(true);
-          const { coords } = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.High,
-          });
-          setIsFetchingLocation(false);
+          if (isPermissionLocation === "granted") {
+            setIsFetchingLocation(true);
+            const { coords } = await Location.getCurrentPositionAsync({
+              accuracy: Location.Accuracy.High,
+            });
+            setIsFetchingLocation(false);
 
-           const {latitude, longitude} = coords;
-           if(latitude && longitude) {
-              setUserLocation({lat: latitude, long: longitude})
-           }
-        }
-       }else{
-
-        // setting location for the web
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              setUserLocation({
-                lat: position.coords.latitude,
-                long: position.coords.longitude,
-              });
-            },
-            (error) => {
-              setLocationErrorWeb(error.message);
+            const { latitude, longitude } = coords;
+            if (latitude && longitude) {
+              setUserLocation({ lat: latitude, long: longitude });
             }
-          );
+          }
         } else {
-          setLocationErrorWeb("Geolocation is not supported by this browser.");
+          // setting location for the web
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                setUserLocation({
+                  lat: position.coords.latitude,
+                  long: position.coords.longitude,
+                });
+              },
+              (error) => {
+                setLocationErrorWeb(error.message);
+              }
+            );
+          } else {
+            setLocationErrorWeb(
+              "Geolocation is not supported by this browser."
+            );
+          }
         }
-
-       }
       }
 
       handleLocation();
@@ -272,7 +271,7 @@ const FormContainerTwo = ({
     if (formInputDataTwo.length === 0) {
       formInputData.forEach((input) => {
         if (formID === input.form_id) {
-          setIsLocationStatus(input.location_status)
+          setIsLocationStatus(input.location_status);
           setIsLoadingInputs(true);
           setInputs(input.inputs);
           setIsLoadingInputs(false);
@@ -298,6 +297,7 @@ const FormContainerTwo = ({
     const isRadio = item.field_type === "radio";
     const isRecord = item.field_type === "auto";
     const isDate = item.field_type === "date";
+    const isLabel = item.field_id === "label";
 
     let placeholder = "Enter value";
     if (item.input_title === "Date") {
@@ -362,7 +362,11 @@ const FormContainerTwo = ({
           />
         )}
 
-        {isInput && (
+        {/* showing the label */}
+
+        {isLabel && <Text style={{fontSize: 18, marginTop: 14}}>{item.input_title}</Text>}
+
+        {isInput && !isLabel && (
           <InputTwo
             formNumber={item.input_rank}
             label={item.input_title}
@@ -461,27 +465,30 @@ const FormContainerTwo = ({
     inputs.forEach((item) => {
       const value = formState[item.field_id];
 
-      if (!value || (Array.isArray(value) && value.length === 0)) {
-        errors[item.field_id] = `${item.input_title} is required`;
-        isValid = false;
+      if(item.field_id !== "label"){
+        if (!value || (Array.isArray(value) && value.length === 0)) {
+          errors[item.field_id] = `${item.input_title} is required`;
+          isValid = false;
 
-        if (isEditing) {
-          Toast.show({
-            type: "error",
-            text1: "Please check all your input values",
-          });
-        } else {
-          Notifier.showNotification({
-            title: "Invalid inputs",
-            description: "Please fill in all the required inputs",
-            Component: NotifierComponents.Alert,
-            componentProps: {
-              alertType: "error",
-            },
-            containerStyle: { zIndex: 999 },
-          });
+          if (isEditing) {
+            Toast.show({
+              type: "error",
+              text1: "Please check all your input values",
+            });
+          } else {
+            Notifier.showNotification({
+              title: "Invalid inputs",
+              description: "Please fill in all the required inputs",
+              Component: NotifierComponents.Alert,
+              componentProps: {
+                alertType: "error",
+              },
+              containerStyle: { zIndex: 999 },
+            });
+          }
         }
       }
+
     });
 
     setErrors(errors); // Store errors to display feedback
@@ -490,9 +497,7 @@ const FormContainerTwo = ({
 
   async function handleOpenSettingsLocation() {
     if (locationPermissionInformation.canAskAgain === false) {
-      Linking.openSettings().catch(() =>
-        console.log("failed to open the settings")
-      );
+
     } else {
       const { status } = await requestPermission();
       if (status === "granted") {
@@ -519,32 +524,30 @@ const FormContainerTwo = ({
     //   });
     //   console.log(coords, "lat and long");
 
-      if (validateForm()) {
+    if (validateForm()) {
+      // console.log("offline")
 
-        // console.log("offline")
+      // await database.write(async () => {
+      //   await database.get('forms').create(form => {
+      //     form.formId = formID;
+      //     form.formData = JSON.stringify({...formState});
+      //     form.latitude = userLocation.lat;
+      //     form.longitude = userLocation.long;
+      //     form.createdAt = Date.now();
+      //     form.updatedAt = Date.now();
+      //   });
+      // });
 
-        // await database.write(async () => {
-        //   await database.get('forms').create(form => {
-        //     form.formId = formID;
-        //     form.formData = JSON.stringify({...formState});
-        //     form.latitude = userLocation.lat;
-        //     form.longitude = userLocation.long;
-        //     form.createdAt = Date.now();
-        //     form.updatedAt = Date.now();
-        //   });
-        // });
+      // console.log("offline finished")
 
-        // console.log("offline finished")
-
-
-        onSubmit({
-          ...formState,
-          form_id: formID,
-          input_number: inputs.length,
-          latitude: userLocation.lat,
-          longitude: userLocation.long,
-        });
-      }
+      onSubmit({
+        ...formState,
+        form_id: formID,
+        input_number: inputs.length,
+        latitude: userLocation.lat,
+        longitude: userLocation.long,
+      });
+    }
     // }
   }
 
@@ -687,11 +690,15 @@ const FormContainerTwo = ({
 
         {!isLoadingInputs && (
           <AnimatedFlatlistComp
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            updateCellsBatchingPeriod={100}
+            windowSize={21}
             entering={FadeIn.duration(300)}
             exiting={FadeOut.duration(300)}
             showsVerticalScrollIndicator={false}
             data={inputs}
-            keyExtractor={(item) => item.field_id}
+            keyExtractor={(item, index) => `${item.field_id}_${index}`}
             renderItem={handleInputsForms}
             contentContainerStyle={styles.flatListContainer}
             refreshControl={
