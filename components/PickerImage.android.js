@@ -66,6 +66,7 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
       onImageHandler(uri);
 
       if (uri) {
+        console.log(uri);
         const uriImage = formatImage(uri);
         const reference = storage().ref(`data_image_one/${formatImage(uri)}`);
 
