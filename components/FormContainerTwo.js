@@ -62,9 +62,9 @@ let PickerImage;
 if (Platform.OS === "ios") {
   PickerImage = require("./PickerImage.ios").default;
 } else if (Platform.OS === "android") {
-  PickerImage = require("./PickerImage.android");
+  PickerImage = require("./PickerImage.android").default;
 } else {
-  PickerImage = require("./PickerImage.web");
+  PickerImage = require("./PickerImage.web").default;
 }
 
 const AnimatedFlatlistComp =
@@ -294,7 +294,7 @@ const FormContainerTwo = ({
   }, [formInputData, formID, formInputDataTwo]);
 
   function updateInputValueHandler(field_id, enteredValue) {
-    if(formID === "55"){
+    if (formID === "55") {
       setFormState((prevState) => ({
         ...prevState,
         [field_id]:
@@ -302,7 +302,7 @@ const FormContainerTwo = ({
             ? { ...prevState[field_id], ...enteredValue } // Merge objects properly
             : enteredValue, // Otherwise, just update
       }));
-    }else{
+    } else {
       setFormState((prevState) => ({
         ...prevState,
         [field_id]:
@@ -321,7 +321,8 @@ const FormContainerTwo = ({
     const isRecord = item.field_type === "auto";
     const isDate = item.field_type === "date";
     const isLabel = item.field_id === "label";
-    const isInputShown = item.field_id === "sub_1_1"
+    const isInputShown =
+      item.field_id === "sub_1_1" ? !isAllQuestion : isAllQuestion;
 
     let placeholder = "Enter value";
     if (item.input_title === "Date") {
@@ -352,24 +353,42 @@ const FormContainerTwo = ({
     return (
       <>
         {/* date time picker */}
-        {isDate && (
-          <InputTwo
-            formNumber={item.input_rank}
-            label={item.input_title}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-            value={formState[item.field_id]}
-            isInvalid={errors[item.field_id]}
-            placeholder='Enter date e.g YYYY-MM-DD'
-            onSubmitEditing={() => inputRef2.current?.focus()}
-            blurOnSubmit={false}
-            returnKeyType='next'
-            keyboardType={keyboardType}
-          />
-        )}
+        {formID === "55"
+          ? isDate &&
+            isAllQuestion && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id]}
+                isInvalid={errors[item.field_id]}
+                placeholder='Enter date e.g YYYY-MM-DD'
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )
+          : isDate && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id]}
+                isInvalid={errors[item.field_id]}
+                placeholder='Enter date e.g YYYY-MM-DD'
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )}
 
-        {isRecord && (
+        {isRecord && isAllQuestion && (
           <InputTwo
             formNumber={item.input_rank}
             label={item.input_title}
@@ -394,68 +413,151 @@ const FormContainerTwo = ({
           </Text>
         )}
 
-        {isInput && !isLabel && (
-          <InputTwo
-            formNumber={item.input_rank}
-            label={item.input_title}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-            value={formState[item.field_id] || ""}
-            isInvalid={errors[item.field_id]}
-            placeholder={placeholder}
-            onSubmitEditing={() => inputRef2.current?.focus()}
-            blurOnSubmit={false}
-            returnKeyType='next'
-            keyboardType={keyboardType}
-          />
-        )}
+        {formID === "55"
+          ? isInput &&
+            !isLabel &&
+            isAllQuestion && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id] || ""}
+                isInvalid={errors[item.field_id]}
+                placeholder={placeholder}
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )
+          : isInput &&
+            !isLabel && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id] || ""}
+                isInvalid={errors[item.field_id]}
+                placeholder={placeholder}
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )}
 
-        {isDropdown && (
-          <DropdownComponent
-            isInvalid={errors[item.field_id]}
-            formNumber={item.input_rank}
-            label={item.input_title}
-            data={dataView}
-            value={formState[item.field_id]}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-            ref={inputRef7}
-          />
-        )}
+        {formID === "55"
+          ? item.field_id !== "sub_1_1"
+            ? isDropdown &&
+              isAllQuestion && (
+                <DropdownComponent
+                  isInvalid={errors[item.field_id]}
+                  formNumber={item.input_rank}
+                  label={item.input_title}
+                  data={dataView}
+                  value={formState[item.field_id]}
+                  onUpdateValue={(value) =>
+                    updateInputValueHandler(item.field_id, value)
+                  }
+                  ref={inputRef7}
+                />
+              )
+            : isDropdown && (
+                <DropdownComponent
+                  isInvalid={errors[item.field_id]}
+                  formNumber={item.input_rank}
+                  label={item.input_title}
+                  data={dataView}
+                  value={formState[item.field_id]}
+                  onUpdateValue={(value) =>
+                    updateInputValueHandler(item.field_id, value)
+                  }
+                  ref={inputRef7}
+                />
+              )
+          : isDropdown && (
+              <DropdownComponent
+                isInvalid={errors[item.field_id]}
+                formNumber={item.input_rank}
+                label={item.input_title}
+                data={dataView}
+                value={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                ref={inputRef7}
+              />
+            )}
 
-        {isRadio && (
-          <RadioComponent
-            isEditing={isEditing}
-            isSuccess={isSuccess}
-            isError={isError}
-            formNumber={item.input_rank}
-            isInvalid={errors[item.field_id]}
-            title={item.input_title}
-            data={dataView}
-            valueEntered={formState[item.field_id]}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-          />
-        )}
+        {formID === "55"
+          ? isRadio &&
+            isAllQuestion && (
+              <RadioComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )
+          : isRadio && (
+              <RadioComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )}
 
-        {isCheckbox && (
-          <CheckboxComponent
-            isEditing={isEditing}
-            isSuccess={isSuccess}
-            isError={isError}
-            formNumber={item.input_rank}
-            isInvalid={errors[item.field_id]}
-            title={item.input_title}
-            data={dataView}
-            valueEntered={formState[item.field_id]}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-          />
-        )}
+        {formID === "55"
+          ? isCheckbox &&
+            isAllQuestion && (
+              <CheckboxComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )
+          : isCheckbox && (
+              <CheckboxComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )}
       </>
     );
   }
@@ -518,9 +620,9 @@ const FormContainerTwo = ({
             }
           }
         }
-      }else{
+      } else {
         if (item.field_id !== "label") {
-          if(item.field_id === "sub_1_1"){
+          if (item.field_id === "sub_1_1") {
             if (!value || (Array.isArray(value) && value.length === 0)) {
               errors[item.field_id] = `${item.input_title} is required`;
               isValid = false;
@@ -776,7 +878,7 @@ const FormContainerTwo = ({
               //  footer component
               <>
                 {/* picker image */}
-                {imageStatus === "YES" && (
+                {imageStatus === "YES" && isAllQuestion && (
                   <PickerImage
                     onImageHandler={takeImageHander}
                     imageFile={imageFile}
