@@ -437,6 +437,9 @@ const FormContainerTwo = ({
       ...prevState,
       imageurl: image, // storing the image in the form state
     }));
+
+    setImageFile(image);
+
   }
 
   function takeLocationHandler(pickedLocation) {
@@ -717,7 +720,9 @@ const FormContainerTwo = ({
             ListFooterComponent={() => (
               //  footer component
               <>
-                {/* location picker */}
+
+                {/* picker image */}
+                <PickerImage onImageHandler={takeImageHander} imageFile={imageFile}/>
 
                 {/* submit button */}
                 <View style={styles.submitContainer}>
