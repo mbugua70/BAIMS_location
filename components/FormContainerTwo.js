@@ -26,6 +26,7 @@ import React, {
   useCallback,
 } from "react";
 import { Notifier, NotifierComponents } from "react-native-notifier";
+import { openSettings } from "react-native-permissions";
 import { ProjectContext } from "../store/projectContext";
 import { AuthContext } from "../store/store";
 import { filterAndSetFormState, inputRefetchHandler } from "../http/api";
@@ -216,6 +217,7 @@ const FormContainerTwo = ({
         "change",
         async (nextAppState) => {
           if (nextAppState === "active") {
+            console.log("active permssion called")
             const updatedPermission =
               await Location.getForegroundPermissionsAsync();
 
@@ -226,6 +228,7 @@ const FormContainerTwo = ({
                 updatedPermission.status !==
                 locationPermissionInformation?.status
               ) {
+                console.log("permission called")
                 requestPermission();
               }
 
@@ -635,6 +638,7 @@ const FormContainerTwo = ({
 
   async function handleOpenSettingsLocation() {
     if (locationPermissionInformation.canAskAgain === false) {
+         openSettings().catch(() => console.warn("Cannot open settings"));
     } else {
       const { status } = await requestPermission();
       if (status === "granted") {
