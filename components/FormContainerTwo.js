@@ -98,6 +98,7 @@ const FormContainerTwo = ({
   const [userLocation, setUserLocation] = useState({});
   const [isLocationStatus, setIsLocationStatus] = useState("");
   const [locationErrorWeb, setLocationErrorWeb] = useState("");
+  const [imageStatus, setImageStatus] = useState("");
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -272,6 +273,7 @@ const FormContainerTwo = ({
       formInputData.forEach((input) => {
         if (formID === input.form_id) {
           setIsLocationStatus(input.location_status);
+          setImageStatus(input.image_required);
           setIsLoadingInputs(true);
           setInputs(input.inputs);
           setIsLoadingInputs(false);
@@ -281,6 +283,7 @@ const FormContainerTwo = ({
   }, [formInputData, formID, formInputDataTwo]);
 
   function updateInputValueHandler(field_id, enteredValue) {
+
     setFormState((prevState) => ({
       ...prevState,
       [field_id]:
@@ -364,7 +367,11 @@ const FormContainerTwo = ({
 
         {/* showing the label */}
 
-        {isLabel && <Text style={{fontSize: 18, marginTop: 14}}>{item.input_title}</Text>}
+        {isLabel && (
+          <Text style={{ fontSize: 18, marginTop: 14 }}>
+            {item.input_title}
+          </Text>
+        )}
 
         {isInput && !isLabel && (
           <InputTwo
@@ -439,7 +446,6 @@ const FormContainerTwo = ({
     }));
 
     setImageFile(image);
-
   }
 
   function takeLocationHandler(pickedLocation) {
@@ -468,7 +474,7 @@ const FormContainerTwo = ({
     inputs.forEach((item) => {
       const value = formState[item.field_id];
 
-      if(item.field_id !== "label"){
+      if (item.field_id !== "label") {
         if (!value || (Array.isArray(value) && value.length === 0)) {
           errors[item.field_id] = `${item.input_title} is required`;
           isValid = false;
@@ -491,7 +497,6 @@ const FormContainerTwo = ({
           }
         }
       }
-
     });
 
     setErrors(errors); // Store errors to display feedback
@@ -500,7 +505,6 @@ const FormContainerTwo = ({
 
   async function handleOpenSettingsLocation() {
     if (locationPermissionInformation.canAskAgain === false) {
-
     } else {
       const { status } = await requestPermission();
       if (status === "granted") {
@@ -550,6 +554,9 @@ const FormContainerTwo = ({
         latitude: userLocation.lat,
         longitude: userLocation.long,
       });
+
+      // clearing the image after submission
+      setImageFile("")
     }
     // }
   }
@@ -720,9 +727,14 @@ const FormContainerTwo = ({
             ListFooterComponent={() => (
               //  footer component
               <>
-
                 {/* picker image */}
-                <PickerImage onImageHandler={takeImageHander} imageFile={imageFile}/>
+                {imageStatus === "YES" && (
+                  <PickerImage
+                    onImageHandler={takeImageHander}
+                    imageFile={imageFile}
+                    resetForm={resetForm}
+                  />
+                )}
 
                 {/* submit button */}
                 <View style={styles.submitContainer}>

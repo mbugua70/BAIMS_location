@@ -52,7 +52,8 @@ const Login = () => {
           form_id: form_inputs.form_id,
           form_title: form_inputs.form_title,
           inputs: form_inputs.form_fields,
-          location_status: form_inputs.location_status
+          location_status: form_inputs.location_status,
+          image_required: form_inputs.image_required,
         })));
 
         const selectFields = inputsFields.flatMap((formSelect) =>
