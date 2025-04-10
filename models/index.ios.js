@@ -10,9 +10,9 @@ import Forms from './forms'
 
 let SQLiteAdapter;
 
-if (Platform.OS === 'ios' || Platform.OS === 'android') {
-  SQLiteAdapter = require('@nozbe/watermelondb/adapters/sqlite').default;
-}
+// if (Platform.OS === 'ios' || Platform.OS === 'android') {
+//   SQLiteAdapter = require('@nozbe/watermelondb/adapters/sqlite').default;
+// }
 
 
 // Conditionally configure the adapter based on platform
