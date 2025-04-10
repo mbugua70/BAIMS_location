@@ -89,13 +89,13 @@ export async function SummaryForm(recordData) {
         if (key === "imageurl") {
           const uri = value;
           const formattedImage = uri.split("/").pop();
-
-          const imageKey = `sub_1_${nextNumber + 2}`;
+           let imageurl = "image_url";
+          // const imageKey = `sub_1_${nextNumber + 2}`;
           // nextNumber += 1;
-          formData.append(imageKey, formattedImage);
+          formData.append(imageurl, formattedImage);
 
           // Remove the original imageurl
-          formData.delete("imageurl");
+          // formData.delete("imageurl");
         } else if (key === "t_date") {
           const date = new Date(value);
           if (isNaN(date.getDate())) {
@@ -117,25 +117,21 @@ export async function SummaryForm(recordData) {
        }
     });
 
-    console.log(Object.fromEntries(formData), "formData");
 
   const res = await fetch(api, {
     method: "POST",
     body: formData,
   });
 
-
   const data = await res.json(); // Handle as plain text
   if (res.ok) {
     return data;
   } else {
-
-    console.log(data, "error found");
-    // throw {
-    //   message: data || "Submission failed.",
-    //   statusText: res.statusText,
-    //   status: res.status,
-    // };
+    throw {
+      message: data || "Submission failed.",
+      statusText: res.statusText,
+      status: res.status,
+    };
   }
 }
 
@@ -227,7 +223,6 @@ export async function fetchRecordData(phone) {
 
     return data;
   } catch (error) {
-    console.log("Error found");
     return error;
   }
 }

@@ -38,6 +38,7 @@
       "injectCss": true
     },
     "plugins": [
+      "./withAndroidWindowSoftInputMode",
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
       [
