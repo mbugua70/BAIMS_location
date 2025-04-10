@@ -10,7 +10,7 @@ import { GlobalStyles } from "../Constants/Globalcolors";
 
 const BottomSheetAuto = forwardRef(({ onAutomatically }, ref) => {
 
-  const snapPoints = [500];
+  const snapPoints = ["100%"];
 
   const handleSheetChanges = useCallback((index) => {
     console.log("handleSheetChanges", index);
@@ -20,6 +20,7 @@ const BottomSheetAuto = forwardRef(({ onAutomatically }, ref) => {
   return (
     <BottomSheetModal
       snapPoints={snapPoints}
+      index={0}
       ref={ref}
       onChange={handleSheetChanges}
       backdropComponent={({ style }) => (
