@@ -321,8 +321,7 @@ const FormContainerTwo = ({
     const isRecord = item.field_type === "auto";
     const isDate = item.field_type === "date";
     const isLabel = item.field_id === "label";
-    const isInputShown =
-      item.field_id === "sub_1_1" ? !isAllQuestion : isAllQuestion;
+    const isInputShown = item.field_id === "sub_1_1";
 
     let placeholder = "Enter value";
     if (item.input_title === "Date") {
@@ -354,8 +353,7 @@ const FormContainerTwo = ({
       <>
         {/* date time picker */}
         {formID === "55"
-          ? isDate &&
-            isAllQuestion && (
+          ? isDate && (
               <InputTwo
                 formNumber={item.input_rank}
                 label={item.input_title}
@@ -388,7 +386,7 @@ const FormContainerTwo = ({
               />
             )}
 
-        {isRecord && isAllQuestion && (
+        {isRecord && (
           <InputTwo
             formNumber={item.input_rank}
             label={item.input_title}
@@ -415,8 +413,7 @@ const FormContainerTwo = ({
 
         {formID === "55"
           ? isInput &&
-            !isLabel &&
-            isAllQuestion && (
+            !isLabel && (
               <InputTwo
                 formNumber={item.input_rank}
                 label={item.input_title}
@@ -451,34 +448,19 @@ const FormContainerTwo = ({
             )}
 
         {formID === "55"
-          ? item.field_id !== "sub_1_1"
-            ? isDropdown &&
-              isAllQuestion && (
-                <DropdownComponent
-                  isInvalid={errors[item.field_id]}
-                  formNumber={item.input_rank}
-                  label={item.input_title}
-                  data={dataView}
-                  value={formState[item.field_id]}
-                  onUpdateValue={(value) =>
-                    updateInputValueHandler(item.field_id, value)
-                  }
-                  ref={inputRef7}
-                />
-              )
-            : isDropdown && (
-                <DropdownComponent
-                  isInvalid={errors[item.field_id]}
-                  formNumber={item.input_rank}
-                  label={item.input_title}
-                  data={dataView}
-                  value={formState[item.field_id]}
-                  onUpdateValue={(value) =>
-                    updateInputValueHandler(item.field_id, value)
-                  }
-                  ref={inputRef7}
-                />
-              )
+          ? isDropdown && (
+              <DropdownComponent
+                isInvalid={errors[item.field_id]}
+                formNumber={item.input_rank}
+                label={item.input_title}
+                data={dataView}
+                value={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                ref={inputRef7}
+              />
+            )
           : isDropdown && (
               <DropdownComponent
                 isInvalid={errors[item.field_id]}
@@ -494,8 +476,7 @@ const FormContainerTwo = ({
             )}
 
         {formID === "55"
-          ? isRadio &&
-            isAllQuestion && (
+          ? isRadio && (
               <RadioComponent
                 isEditing={isEditing}
                 isSuccess={isSuccess}
@@ -527,8 +508,7 @@ const FormContainerTwo = ({
             )}
 
         {formID === "55"
-          ? isCheckbox &&
-            isAllQuestion && (
+          ? isCheckbox && (
               <CheckboxComponent
                 isEditing={isEditing}
                 isSuccess={isSuccess}
@@ -878,7 +858,7 @@ const FormContainerTwo = ({
               //  footer component
               <>
                 {/* picker image */}
-                {imageStatus === "YES" && isAllQuestion && (
+                {imageStatus === "YES" && (
                   <PickerImage
                     onImageHandler={takeImageHander}
                     imageFile={imageFile}
