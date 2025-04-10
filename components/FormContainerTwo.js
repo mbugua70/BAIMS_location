@@ -62,9 +62,9 @@ let PickerImage;
 if (Platform.OS === "ios") {
   PickerImage = require("./PickerImage.ios").default;
 } else if (Platform.OS === "android") {
-  PickerImage = require("./PickerImage.android");
-}else{
-  PickerImage = require("./PickerImage.web")
+  PickerImage = require("./PickerImage.android").default;
+} else {
+  PickerImage = require("./PickerImage.web").default;
 }
 
 const AnimatedFlatlistComp =
@@ -109,6 +109,7 @@ const FormContainerTwo = ({
   const [isLocationStatus, setIsLocationStatus] = useState("");
   const [locationErrorWeb, setLocationErrorWeb] = useState("");
   const [imageStatus, setImageStatus] = useState("");
+  const [isAllQuestion, setIsAllQuestion] = useState(false);
 
   // userRefs for input fields to be used in the form
   const inputRef1 = useRef(null);
@@ -293,13 +294,23 @@ const FormContainerTwo = ({
   }, [formInputData, formID, formInputDataTwo]);
 
   function updateInputValueHandler(field_id, enteredValue) {
-    setFormState((prevState) => ({
-      ...prevState,
-      [field_id]:
-        typeof enteredValue === "object"
-          ? { ...prevState[field_id], ...enteredValue } // Merge objects properly
-          : enteredValue, // Otherwise, just update
-    }));
+    if (formID === "55") {
+      setFormState((prevState) => ({
+        ...prevState,
+        [field_id]:
+          typeof enteredValue === "object"
+            ? { ...prevState[field_id], ...enteredValue } // Merge objects properly
+            : enteredValue, // Otherwise, just update
+      }));
+    } else {
+      setFormState((prevState) => ({
+        ...prevState,
+        [field_id]:
+          typeof enteredValue === "object"
+            ? { ...prevState[field_id], ...enteredValue } // Merge objects properly
+            : enteredValue, // Otherwise, just update
+      }));
+    }
   }
 
   function handleInputsForms({ item, index }) {
@@ -310,6 +321,7 @@ const FormContainerTwo = ({
     const isRecord = item.field_type === "auto";
     const isDate = item.field_type === "date";
     const isLabel = item.field_id === "label";
+    const isInputShown = item.field_id === "sub_1_1";
 
     let placeholder = "Enter value";
     if (item.input_title === "Date") {
@@ -340,22 +352,39 @@ const FormContainerTwo = ({
     return (
       <>
         {/* date time picker */}
-        {isDate && (
-          <InputTwo
-            formNumber={item.input_rank}
-            label={item.input_title}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-            value={formState[item.field_id]}
-            isInvalid={errors[item.field_id]}
-            placeholder='Enter date e.g YYYY-MM-DD'
-            onSubmitEditing={() => inputRef2.current?.focus()}
-            blurOnSubmit={false}
-            returnKeyType='next'
-            keyboardType={keyboardType}
-          />
-        )}
+        {formID === "55"
+          ? isDate && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id]}
+                isInvalid={errors[item.field_id]}
+                placeholder='Enter date e.g YYYY-MM-DD'
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )
+          : isDate && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id]}
+                isInvalid={errors[item.field_id]}
+                placeholder='Enter date e.g YYYY-MM-DD'
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )}
 
         {isRecord && (
           <InputTwo
@@ -382,68 +411,133 @@ const FormContainerTwo = ({
           </Text>
         )}
 
-        {isInput && !isLabel && (
-          <InputTwo
-            formNumber={item.input_rank}
-            label={item.input_title}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-            value={formState[item.field_id] || ""}
-            isInvalid={errors[item.field_id]}
-            placeholder={placeholder}
-            onSubmitEditing={() => inputRef2.current?.focus()}
-            blurOnSubmit={false}
-            returnKeyType='next'
-            keyboardType={keyboardType}
-          />
-        )}
+        {formID === "55"
+          ? isInput &&
+            !isLabel && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id] || ""}
+                isInvalid={errors[item.field_id]}
+                placeholder={placeholder}
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )
+          : isInput &&
+            !isLabel && (
+              <InputTwo
+                formNumber={item.input_rank}
+                label={item.input_title}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                value={formState[item.field_id] || ""}
+                isInvalid={errors[item.field_id]}
+                placeholder={placeholder}
+                onSubmitEditing={() => inputRef2.current?.focus()}
+                blurOnSubmit={false}
+                returnKeyType='next'
+                keyboardType={keyboardType}
+              />
+            )}
 
-        {isDropdown && (
-          <DropdownComponent
-            isInvalid={errors[item.field_id]}
-            formNumber={item.input_rank}
-            label={item.input_title}
-            data={dataView}
-            value={formState[item.field_id]}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-            ref={inputRef7}
-          />
-        )}
+        {formID === "55"
+          ? isDropdown && (
+              <DropdownComponent
+                isInvalid={errors[item.field_id]}
+                formNumber={item.input_rank}
+                label={item.input_title}
+                data={dataView}
+                value={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                ref={inputRef7}
+              />
+            )
+          : isDropdown && (
+              <DropdownComponent
+                isInvalid={errors[item.field_id]}
+                formNumber={item.input_rank}
+                label={item.input_title}
+                data={dataView}
+                value={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+                ref={inputRef7}
+              />
+            )}
 
-        {isRadio && (
-          <RadioComponent
-            isEditing={isEditing}
-            isSuccess={isSuccess}
-            isError={isError}
-            formNumber={item.input_rank}
-            isInvalid={errors[item.field_id]}
-            title={item.input_title}
-            data={dataView}
-            valueEntered={formState[item.field_id]}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-          />
-        )}
+        {formID === "55"
+          ? isRadio && (
+              <RadioComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )
+          : isRadio && (
+              <RadioComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )}
 
-        {isCheckbox && (
-          <CheckboxComponent
-            isEditing={isEditing}
-            isSuccess={isSuccess}
-            isError={isError}
-            formNumber={item.input_rank}
-            isInvalid={errors[item.field_id]}
-            title={item.input_title}
-            data={dataView}
-            valueEntered={formState[item.field_id]}
-            onUpdateValue={(value) =>
-              updateInputValueHandler(item.field_id, value)
-            }
-          />
-        )}
+        {formID === "55"
+          ? isCheckbox && (
+              <CheckboxComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )
+          : isCheckbox && (
+              <CheckboxComponent
+                isEditing={isEditing}
+                isSuccess={isSuccess}
+                isError={isError}
+                formNumber={item.input_rank}
+                isInvalid={errors[item.field_id]}
+                title={item.input_title}
+                data={dataView}
+                valueEntered={formState[item.field_id]}
+                onUpdateValue={(value) =>
+                  updateInputValueHandler(item.field_id, value)
+                }
+              />
+            )}
       </>
     );
   }
@@ -482,27 +576,54 @@ const FormContainerTwo = ({
 
     inputs.forEach((item) => {
       const value = formState[item.field_id];
+      if (formID !== "55") {
+        if (item.field_id !== "label") {
+          if (!value || (Array.isArray(value) && value.length === 0)) {
+            errors[item.field_id] = `${item.input_title} is required`;
+            isValid = false;
 
-      if (item.field_id !== "label") {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          errors[item.field_id] = `${item.input_title} is required`;
-          isValid = false;
+            if (isEditing) {
+              Toast.show({
+                type: "error",
+                text1: "Please check all your input values",
+              });
+            } else {
+              Notifier.showNotification({
+                title: "Invalid inputs",
+                description: "Please fill in all the required inputs",
+                Component: NotifierComponents.Alert,
+                componentProps: {
+                  alertType: "error",
+                },
+                containerStyle: { zIndex: 999 },
+              });
+            }
+          }
+        }
+      } else {
+        if (item.field_id !== "label") {
+          if (item.field_id === "sub_1_1") {
+            if (!value || (Array.isArray(value) && value.length === 0)) {
+              errors[item.field_id] = `${item.input_title} is required`;
+              isValid = false;
 
-          if (isEditing) {
-            Toast.show({
-              type: "error",
-              text1: "Please check all your input values",
-            });
-          } else {
-            Notifier.showNotification({
-              title: "Invalid inputs",
-              description: "Please fill in all the required inputs",
-              Component: NotifierComponents.Alert,
-              componentProps: {
-                alertType: "error",
-              },
-              containerStyle: { zIndex: 999 },
-            });
+              if (isEditing) {
+                Toast.show({
+                  type: "error",
+                  text1: "Please check all your input values",
+                });
+              } else {
+                Notifier.showNotification({
+                  title: "Invalid inputs",
+                  description: "Please fill in all the required inputs",
+                  Component: NotifierComponents.Alert,
+                  componentProps: {
+                    alertType: "error",
+                  },
+                  containerStyle: { zIndex: 999 },
+                });
+              }
+            }
           }
         }
       }
