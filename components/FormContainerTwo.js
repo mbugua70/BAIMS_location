@@ -54,8 +54,18 @@ import LocationPicker from "./LocationPicker";
 import RadioComponent from "./RadioComponent";
 import Checkbox from "./Checkbox";
 import CheckboxComponent from "./Checkbox";
-import PickerImage from "./PickerImage";
+// import PickerImage from "./PickerImage.android";
 import BottomSheetAuto from "../UI/BottomSheetAuto";
+
+let PickerImage;
+
+if (Platform.OS === "ios") {
+  PickerImage = require("./PickerImage.ios").default;
+} else if (Platform.OS === "android") {
+  PickerImage = require("./PickerImage.android");
+}else{
+  PickerImage = require("./PickerImage.web")
+}
 
 const AnimatedFlatlistComp =
   Platform.OS === "web" ? FlatList : Animated.FlatList;
@@ -283,7 +293,6 @@ const FormContainerTwo = ({
   }, [formInputData, formID, formInputDataTwo]);
 
   function updateInputValueHandler(field_id, enteredValue) {
-
     setFormState((prevState) => ({
       ...prevState,
       [field_id]:
@@ -556,7 +565,7 @@ const FormContainerTwo = ({
       });
 
       // clearing the image after submission
-      setImageFile("")
+      setImageFile("");
     }
     // }
   }
