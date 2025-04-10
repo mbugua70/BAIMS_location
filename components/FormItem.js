@@ -45,7 +45,6 @@ const FormItem = ({
     },
 
     onSuccess: (data) => {
-      console.log("data", data)
       const formatData = JSON.parse(data);
       if (formatData.data.length > 0) {
         setOverall(formatData.data);
