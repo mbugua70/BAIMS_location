@@ -89,13 +89,13 @@ export async function SummaryForm(recordData) {
         if (key === "imageurl") {
           const uri = value;
           const formattedImage = uri.split("/").pop();
-
-          const imageKey = `sub_1_${nextNumber + 2}`;
+           let imageurl = "image_url";
+          // const imageKey = `sub_1_${nextNumber + 2}`;
           // nextNumber += 1;
-          formData.append(imageKey, formattedImage);
+          formData.append(imageurl, formattedImage);
 
           // Remove the original imageurl
-          formData.delete("imageurl");
+          // formData.delete("imageurl");
         } else if (key === "t_date") {
           const date = new Date(value);
           if (isNaN(date.getDate())) {
@@ -122,7 +122,6 @@ export async function SummaryForm(recordData) {
     method: "POST",
     body: formData,
   });
-
 
   const data = await res.json(); // Handle as plain text
   if (res.ok) {
