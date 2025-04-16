@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { utils } from "@react-native-firebase/app";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import { ProgressBar, MD3Colors } from "react-native-paper";
-
+import * as DocumentPicker from 'expo-document-picker';
 import storage from "@react-native-firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 import SecondaryButton from "./SecondaryButton";
@@ -70,7 +70,6 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
         const uriImage = formatImage(uri);
         const reference = storage().ref(`data_image_one/${formatImage(uri)}`);
 
-        // uploads file
         try {
           setIsUploadingFile(true);
           const uploadResponse = await reference.putFile(uri);
@@ -80,13 +79,43 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
           console.log(error, "error uploading file to firebase");
         }
       }
-    } else {
+    }
+    setIsFetchingImage(false);
+  }
+
+  async function handleFilePick() {
+    try {
+      setIsFetchingImage(true);
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'image/*',
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled) {
+        const uri = result.assets[0].uri;
+        setPickedImaage(uri);
+        onImageHandler(uri);
+
+        const uriImage = formatImage(uri);
+        const reference = storage().ref(`data_image_one/${formatImage(uri)}`);
+
+        try {
+          setIsUploadingFile(true);
+          await reference.putFile(uri);
+        } catch (error) {
+          console.log(error, "error uploading file to firebase");
+        } finally {
+          setIsUploadingFile(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsFetchingImage(false);
     }
   }
 
   React.useEffect(() => {}, [isFetchingImage]);
-
-  // loading indicator before the image is fetched
 
   let imageContent = (
     <Pressable
@@ -94,7 +123,7 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
         { opacity: pressed ? 0.5 : 1 },
         styles.emptyContainer,
       ]}
-      onPress={handleImage}>
+      onPress={handleFilePick}>
       <Image
         source={require("../assets/image/upload.png")}
         style={styles.uploadImage}
@@ -110,12 +139,20 @@ const PickerImage = ({ onImageHandler, imageFile, resetForm }) => {
   return (
     <View>
       <View style={styles.imageContainer}>{imageContent}</View>
-      <SecondaryButton
-        isFetchingLocation={isFetchingImage}
-        icon='camera'
-        onPress={handleImage}>
-        Take a Picture
-      </SecondaryButton>
+      <View style={styles.buttonContainer}>
+        <SecondaryButton
+          isFetchingLocation={isFetchingImage}
+          icon='camera'
+          onPress={handleImage}>
+          Take a Picture
+        </SecondaryButton>
+        <SecondaryButton
+          isFetchingLocation={isFetchingImage}
+          icon='folder'
+          onPress={handleFilePick}>
+          Browse Files
+        </SecondaryButton>
+      </View>
     </View>
   );
 };
@@ -134,20 +171,16 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderWidth: 2,
     borderRadius: 12,
-    // overflow: "hidden",
   },
-
   textfallback: {
     textAlign: "center",
     color: "#fff",
   },
-
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 12,
   },
-
   emptyContainer: {
     width: "100%",
     height: "100%",
@@ -157,5 +190,10 @@ const styles = StyleSheet.create({
   uploadImage: {
     width: 100,
     height: 100,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
   },
 });
